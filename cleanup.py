@@ -532,22 +532,13 @@ class removeMics(QMainWindow):
 				self.badjpeg = f2.readlines()
 		self.selectCheck.show()
 
-	def deleteTrash(self, event):
-		self.trashMessage = QMessageBox.question(self, 'Delete', "Delete trash directories?", QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel)
-		if self.trashMessage == QMessageBox.Yes:
+	def deleteTrash(self):
+		trashMessage = QMessageBox.question(self, 'Delete', "Delete trash directories?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+		if trashMessage == QMessageBox.Yes:
 			if tabWidgetSetup.tiffDir1 != "" and " " not in tabWidgetSetup.tiffDir1:
 				os.system("rm -rf %s/tiffsTrash" % (tabWidgetSetup.tiffDir1))
 			os.system("rm -rf %s/jpegTrash" % (tabWidgetSetup.jpegDir1))
 			os.system("rm -rf %s/mrcTrash" % (tabWidgetSetup.micDir1))
-			event.accept()
-		if self.trashMessage != QMessageBox.Cancel:
-			fileNum = 0
-			while os.path.isfile("badjpeg_deleted_%s.log" % (fileNum)) == True:
-				fileNum += 1
-			os.system("mv badjpeg_selected.log badjpeg_deleted_%s.log" % (fileNum))
-			os.system("rm -f jpeglist.txt")
-		if self.trashMessage == QMessageBox.Cancel:
-			event.ignore()
 
 	def undoTrash(self):
 		undoMessage = QMessageBox.question(self, 'Undo', "Undo all trashed micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
@@ -559,7 +550,21 @@ class removeMics(QMainWindow):
 			open("badjpeg_selected.log", "w").close()
 			
 	def closeEvent(self, event):
-		self.deleteTrash(event)
+		self.endMessage = QMessageBox.question(self, 'Delete', "Delete trash directories?", QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel)
+		if self.endMessage == QMessageBox.Yes:
+			if tabWidgetSetup.tiffDir1 != "" and " " not in tabWidgetSetup.tiffDir1:
+				os.system("rm -rf %s/tiffsTrash" % (tabWidgetSetup.tiffDir1))
+			os.system("rm -rf %s/jpegTrash" % (tabWidgetSetup.jpegDir1))
+			os.system("rm -rf %s/mrcTrash" % (tabWidgetSetup.micDir1))
+			event.accept()
+		if self.endMessage != QMessageBox.Cancel:
+			fileNum = 0
+			while os.path.isfile("badjpeg_deleted_%s.log" % (fileNum)) == True:
+				fileNum += 1
+			os.system("mv badjpeg_selected.log badjpeg_deleted_%s.log" % (fileNum))
+			os.system("rm -f jpeglist.txt")
+		if self.endMessage == QMessageBox.Cancel:
+			event.ignore()
 
 
 
