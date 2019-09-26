@@ -556,13 +556,13 @@ class removeMics(QMainWindow):
 				os.system("rm -rf %s/tiffsTrash" % (tabWidgetSetup.tiffDir1))
 			os.system("rm -rf %s/jpegTrash" % (tabWidgetSetup.jpegDir1))
 			os.system("rm -rf %s/mrcTrash" % (tabWidgetSetup.micDir1))
-			event.accept()
 		if self.endMessage != QMessageBox.Cancel:
 			fileNum = 0
 			while os.path.isfile("badjpeg_deleted_%s.log" % (fileNum)) == True:
 				fileNum += 1
 			os.system("mv badjpeg_selected.log badjpeg_deleted_%s.log" % (fileNum))
 			os.system("rm -f jpeglist.txt")
+			event.accept()
 		if self.endMessage == QMessageBox.Cancel:
 			event.ignore()
 
