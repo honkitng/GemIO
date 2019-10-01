@@ -3,7 +3,7 @@
 import os
 import sys
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtWidgets import QMainWindow, QLineEdit, QLabel, QPushButton, QRadioButton, QTabWidget, QWidget, QFormLayout, QHBoxLayout, QCheckBox, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QLineEdit, QLabel, QPushButton, QRadioButton, QTabWidget, QWidget, QFormLayout, QHBoxLayout, QCheckBox, QMessageBox, QFileDialog
 from PyQt5.QtGui import QIcon, QPixmap
 
 class micsLocation(QMainWindow):
@@ -29,8 +29,8 @@ class tabWidgetSetup(QWidget):
 		self.ctfTab = QWidget()
 		self.relionTab = QWidget()
 
-		self.tabs.addTab(self.motioncorTab,"Only MotionCor2")
-		self.tabs.addTab(self.ctfTab,"MotionCor2 with CTF")
+		self.tabs.addTab(self.motioncorTab,"Remove with JPEG")
+		self.tabs.addTab(self.ctfTab,"Remove with JPEG and CTF")
 		self.tabs.addTab(self.relionTab,"Relion GUI")
 		self.motioncorUI()
 		self.ctfUI()
@@ -373,6 +373,10 @@ class removeMics(QMainWindow):
 
 		self.menu = self.menuBar()
 		self.fileMenu = self.menu.addMenu('&File')
+		self.importMenu = self.fileMenu.addAction("&Import log file")
+		self.importMenu.triggered.connect(self.importLog)
+		self.openMenu = self.fileMenu.addAction("&Open micrograph")
+		self.openMenu.triggered.connect(self.openMic)
 		self.trashMenu = self.fileMenu.addAction("&Trash all selected")
 		self.trashMenu.triggered.connect(self.lastNext)
 		self.deleteMenu = self.fileMenu.addAction("&Delete all trash directories")
@@ -488,6 +492,35 @@ class removeMics(QMainWindow):
 		self.deleteButton.hide()
 		self.selectCheck.hide()
 		self.viewJPEG()
+
+	def importLog(self):
+		self.importFile = QFileDialog.getOpenFileName(self, "Import log", "." , "Log files (*.log)")
+		if self.importFile[0] != "":
+			os.system("cp %s badjpeg_selected.log" % (self.importFile[0]))
+
+
+
+
+#add error message if open something from trash
+
+	def openMic(self):
+		self.mic2open_full = QFileDialog.getOpenFileName(self, "Open", "%s" % (tabWidgetSetup.jpegDir1) , "Image files (*.jpeg)")
+		self.mic2open_trunc = self.mic2open_full[0].rsplit("/",1)[-1]
+		self.mic2open_path = self.jpeg.rsplit("/",1)[0]
+		self.mic2open = self.mic2open_path + "/" + self.mic2open_trunc
+		if self.mic2open_full[0] != "":
+			self.i = self.jpeglist.index(self.mic2open + "\n")
+			self.label.hide()
+			self.nextButton.hide()
+			self.backButton.hide()
+			self.deleteButton.hide()
+			self.selectCheck.hide()
+			self.viewJPEG()
+
+
+
+
+
 
 	def lastNext(self):
 		deleteMessage = QMessageBox.question(self, 'Trash', "Trash all selected micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
