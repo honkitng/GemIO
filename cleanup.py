@@ -498,11 +498,6 @@ class removeMics(QMainWindow):
 		if self.importFile[0] != "":
 			os.system("cp %s badjpeg_selected.log" % (self.importFile[0]))
 
-
-
-
-#add error message if open something from trash
-
 	def openMic(self):
 		self.mic2open_full = QFileDialog.getOpenFileName(self, "Open", "%s" % (tabWidgetSetup.jpegDir1) , "Image files (*.jpeg)")
 		self.mic2open_trunc = self.mic2open_full[0].rsplit("/",1)[-1]
@@ -516,11 +511,6 @@ class removeMics(QMainWindow):
 			self.deleteButton.hide()
 			self.selectCheck.hide()
 			self.viewJPEG()
-
-
-
-
-
 
 	def lastNext(self):
 		deleteMessage = QMessageBox.question(self, 'Trash', "Trash all selected micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
