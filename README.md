@@ -11,6 +11,6 @@ This program uses JPEG files to view and delete micrographs; use e2proc2d.py to 
 * PyQt5 (5.9.2) module - install using "pip3.6 install PyQt5" after installing python3.6
 
 
-##Usage
+## Usage
 This script can be run on a Windows machine to generate the log files ONLY. This file can be imported into the program when it is run on a Linux machine with all the data.
 * To generate the log file on a Windows machine, simply select all micrographs you wish to remove and close the program when you are done.
