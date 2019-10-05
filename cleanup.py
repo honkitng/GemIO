@@ -10,7 +10,7 @@ class micsLocation(QMainWindow):
 	def __init__(self):
 		super(micsLocation, self).__init__()
 
-		self.setGeometry(200, 200, 570, 350)
+		self.setGeometry(200, 200, 570, 100)
 		self.setWindowTitle("Settings")
 
 		self.tabWidget = tabWidgetSetup(self)
@@ -44,20 +44,16 @@ class tabWidgetSetup(QWidget):
 	def motioncorUI(self):
 		self.motioncorTab.layout = QFormLayout(self)
 
-		self.headLabel1 = QLabel(self)
-		self.headLabel1.setText("This program uses JPEG files to view and delete micrographs; use e2proc2d.py to low pass filter and generate the JPEG files from the MRC files if they do not already exist.\n\nNote 1: Only input TIF directory if removing TIF files\nNote 2: This program assumes that the TIF files have a \".tif\" file extension and not \".tiff\".")
-		self.headLabel1.setWordWrap(True)
-		self.motioncorTab.layout.addRow(self.headLabel1)
+		if os.name != 'nt':
+			self.tiffLabel1 = QLabel(self)
+			self.tiffLabel1.setText("TIF directory:")
+			self.tiffText1 = QLineEdit(self)
+			self.motioncorTab.layout.addRow(self.tiffLabel1, self.tiffText1)
 
-		self.tiffLabel1 = QLabel(self)
-		self.tiffLabel1.setText("TIF directory:")
-		self.tiffText1 = QLineEdit(self)
-		self.motioncorTab.layout.addRow(self.tiffLabel1, self.tiffText1)
-		
-		self.micLabel1 = QLabel(self)
-		self.micLabel1.setText("Corrected micrographs directory:")
-		self.micText1 = QLineEdit(self)
-		self.motioncorTab.layout.addRow(self.micLabel1, self.micText1)
+			self.micLabel1 = QLabel(self)
+			self.micLabel1.setText("Corrected micrographs directory:")
+			self.micText1 = QLineEdit(self)
+			self.motioncorTab.layout.addRow(self.micLabel1, self.micText1)
 
 		self.jpegLabel1 = QLabel(self)
 		self.jpegLabel1.setText("JPEG directory:")
@@ -72,8 +68,12 @@ class tabWidgetSetup(QWidget):
 		self.motioncorTab.setLayout(self.motioncorTab.layout)
 
 	def motioncorGoNext(self):
-		tabWidgetSetup.tiffDir1 = self.tiffText1.text()
-		tabWidgetSetup.micDir1 = self.micText1.text()
+		if os.name == 'nt':
+			tabWidgetSetup.tiffDir1 = "None_Entered"
+			tabWidgetSetup.micDir1 = "None_Entered"
+		else:
+			tabWidgetSetup.tiffDir1 = self.tiffText1.text()
+			tabWidgetSetup.micDir1 = self.micText1.text()
 		tabWidgetSetup.jpegDir1 = self.jpegText1.text()
 		window1.hide()
 		self.rmMics = removeMics(self)
@@ -82,7 +82,7 @@ class tabWidgetSetup(QWidget):
 	def ctfUI(self):
 		self.ctfTab.layout = QFormLayout(self)
 
-		self.curateLabel2 = QLabel(self)
+		"""self.curateLabel2 = QLabel(self)
 		self.curateLabel2.setText("Curate with jpeg or mrc files:")
 
 		self.curateType2 = QHBoxLayout()
@@ -171,10 +171,10 @@ class tabWidgetSetup(QWidget):
 		self.ctfSubmit = QPushButton(self)
 		self.ctfSubmit.setText("Submit")
 		self.ctfSubmit.clicked.connect(self.ctfGoNext)
-		self.ctfTab.layout.addRow(self.ctfSubmit)
+		self.ctfTab.layout.addRow(self.ctfSubmit)"""
 
 		self.ctfTab.setLayout(self.ctfTab.layout)
-		self.curateJPEG2.setChecked(True)
+		"""self.curateJPEG2.setChecked(True)
 		self.moviesText2.setDisabled(True)
 		self.micText2.setDisabled(True)
 		self.ctfText2.setDisabled(True)
@@ -215,12 +215,12 @@ class tabWidgetSetup(QWidget):
 			if checkbox.isChecked() == True:
 				self.ctfText2.setDisabled(False)
 			else:
-				self.ctfText2.setDisabled(True)
+				self.ctfText2.setDisabled(True)"""
 
 	def relionUI(self):
 		self.relionTab.layout = QFormLayout(self)
 
-		self.curateLabel3 = QLabel(self)
+		"""self.curateLabel3 = QLabel(self)
 		self.curateLabel3.setText("Curate with jpeg or mrc files:")
 
 		self.curateType3 = QHBoxLayout()
@@ -309,10 +309,10 @@ class tabWidgetSetup(QWidget):
 		self.relionSubmit = QPushButton(self)
 		self.relionSubmit.setText("Submit")
 		self.relionSubmit.clicked.connect(self.relionGoNext)
-		self.relionTab.layout.addRow(self.relionSubmit)
+		self.relionTab.layout.addRow(self.relionSubmit)"""
 
 		self.relionTab.setLayout(self.relionTab.layout)
-		self.curateJPEG3.setChecked(True)
+		"""self.curateJPEG3.setChecked(True)
 		self.moviesText3.setDisabled(True)
 		self.micText3.setDisabled(True)
 		self.ctfText3.setDisabled(True)
@@ -353,7 +353,7 @@ class tabWidgetSetup(QWidget):
 			if checkbox.isChecked() == True:
 				self.ctfText3.setDisabled(False)
 			else:
-				self.ctfText3.setDisabled(True)
+				self.ctfText3.setDisabled(True)"""
 
 
 
@@ -363,10 +363,16 @@ class removeMics(QMainWindow):
 
 		self.setWindowFlag(QtCore.Qt.WindowMaximizeButtonHint, False)
 
-		os.system("ls %s/*.jpeg > jpeglist.txt" % (tabWidgetSetup.jpegDir1))
+		if os.name == 'nt':
+			os.system("dir /B %s\*.jpeg > jpeglist.txt" % (tabWidgetSetup.jpegDir1))
+		else:
+			os.system("ls %s/*.jpeg > jpeglist.txt" % (tabWidgetSetup.jpegDir1))
 
 		if os.path.isfile("badjpeg_selected.log") == False:
-			os.system("touch badjpeg_selected.log") 
+			if os.name == 'nt':
+				os.system("touch>badjpeg_selected.log")
+			else:
+				os.system("touch badjpeg_selected.log")
 
 		with open("jpeglist.txt") as f1:
 			self.jpeglist = f1.readlines()
@@ -377,13 +383,14 @@ class removeMics(QMainWindow):
 		self.importMenu.triggered.connect(self.importLog)
 		self.openMenu = self.fileMenu.addAction("&Open micrograph")
 		self.openMenu.triggered.connect(self.openMic)
-		self.trashMenu = self.fileMenu.addAction("&Trash all selected")
-		self.trashMenu.triggered.connect(self.lastNext)
-		self.deleteMenu = self.fileMenu.addAction("&Delete all trash directories")
-		self.deleteMenu.triggered.connect(self.deleteTrash)
-		self.editMenu = self.menu.addMenu('&Edit')
-		self.undoMenu = self.editMenu.addAction("&Undo all trashed")
-		self.undoMenu.triggered.connect(self.undoTrash)
+		if os.name != 'nt':
+			self.trashMenu = self.fileMenu.addAction("&Trash all selected")
+			self.trashMenu.triggered.connect(self.lastNext)
+			self.deleteMenu = self.fileMenu.addAction("&Delete all trash directories")
+			self.deleteMenu.triggered.connect(self.deleteTrash)
+			self.editMenu = self.menu.addMenu('&Edit')
+			self.undoMenu = self.editMenu.addAction("&Undo all trashed")
+			self.undoMenu.triggered.connect(self.undoTrash)
 		self.menu.show()
 
 		self.i = 0
@@ -426,7 +433,8 @@ class removeMics(QMainWindow):
 		if self.jpeglist[self.i] != self.jpeglist[-1]:
 			self.nextButton.clicked.connect(self.nextMic)
 		else:
-			self.nextButton.clicked.connect(self.lastNext)
+			if os.name != 'nt':
+				self.nextButton.clicked.connect(self.lastNext)
 		self.nextButton.show()
 
 		self.backButton = QPushButton(self)
@@ -470,13 +478,13 @@ class removeMics(QMainWindow):
 			if self.jpeglist[self.i] != self.jpeglist[-1]:
 				self.nextMic()
 			else:
-				self.lastNext()
+				if os.name != 'nt':
+					self.lastNext()
 		elif event.key() == QtCore.Qt.Key_S:
 			self.deleteMic()
 		event.accept()
 
-	def nextMic(self):
-		self.i = self.i + 1
+	def resetGUI(self):
 		self.label.hide()
 		self.nextButton.hide()
 		self.backButton.hide()
@@ -484,14 +492,13 @@ class removeMics(QMainWindow):
 		self.selectCheck.hide()
 		self.viewJPEG()
 
+	def nextMic(self):
+		self.i = self.i + 1
+		self.resetGUI()
+
 	def backMic(self):
 		self.i = self.i - 1
-		self.label.hide()
-		self.nextButton.hide()
-		self.backButton.hide()
-		self.deleteButton.hide()
-		self.selectCheck.hide()
-		self.viewJPEG()
+		self.resetGUI()
 
 	def importLog(self):
 		self.importFile = QFileDialog.getOpenFileName(self, "Import log", "." , "Log files (*.log)")
@@ -572,22 +579,37 @@ class removeMics(QMainWindow):
 			os.system("mv %s/mrcTrash/* %s" % (tabWidgetSetup.micDir1,tabWidgetSetup.micDir1))
 			open("badjpeg_selected.log", "w").close()
 			
-	def closeEvent(self, event):
-		self.endMessage = QMessageBox.question(self, 'Delete', "Delete trash directories?", QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel)
-		if self.endMessage == QMessageBox.Yes:
-			if tabWidgetSetup.tiffDir1 != "" and " " not in tabWidgetSetup.tiffDir1:
-				os.system("rm -rf %s/tiffsTrash" % (tabWidgetSetup.tiffDir1))
-			os.system("rm -rf %s/jpegTrash" % (tabWidgetSetup.jpegDir1))
-			os.system("rm -rf %s/mrcTrash" % (tabWidgetSetup.micDir1))
-		if self.endMessage != QMessageBox.Cancel:
-			fileNum = 0
-			while os.path.isfile("badjpeg_deleted_%s.log" % (fileNum)) == True:
-				fileNum += 1
+	def saveLog(self):
+		fileNum = 0
+		while os.path.isfile("badjpeg_deleted_%s.log" % (fileNum)) == True:
+			fileNum += 1
+		if os.name == 'nt':
+			os.system("move badjpeg_selected.log badjpeg_deleted_%s.log" % (fileNum))
+			os.system("del jpeglist.txt")
+		else:
 			os.system("mv badjpeg_selected.log badjpeg_deleted_%s.log" % (fileNum))
-			os.system("rm -f jpeglist.txt")
-			event.accept()
-		if self.endMessage == QMessageBox.Cancel:
-			event.ignore()
+			os.system("rm jpeglist.txt")
+			
+	def closeEvent(self, event):
+		if os.name == 'nt':
+			self.endMessage = QMessageBox.question(self, 'Save', "Save and close?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+			if self.endMessage == QMessageBox.Yes:
+				self.saveLog()
+				event.accept()
+			else:
+				event.ignore()
+		else:
+			self.endMessage = QMessageBox.question(self, 'Delete', "Delete trash directories?", QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel)
+			if self.endMessage == QMessageBox.Yes:
+				if tabWidgetSetup.tiffDir1 != "" and " " not in tabWidgetSetup.tiffDir1:
+					os.system("rm -rf %s/tiffsTrash" % (tabWidgetSetup.tiffDir1))
+				os.system("rm -rf %s/jpegTrash" % (tabWidgetSetup.jpegDir1))
+				os.system("rm -rf %s/mrcTrash" % (tabWidgetSetup.micDir1))
+			if self.endMessage != QMessageBox.Cancel:
+				self.saveLog()
+				event.accept()
+			if self.endMessage == QMessageBox.Cancel:
+				event.ignore()
 
 
 
