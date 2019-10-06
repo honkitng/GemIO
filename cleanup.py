@@ -364,7 +364,15 @@ class removeMics(QMainWindow):
 		self.setWindowFlag(QtCore.Qt.WindowMaximizeButtonHint, False)
 
 		if os.name == 'nt':
-			os.system("dir /B %s\*.jpeg > jpeglist.txt" % (tabWidgetSetup.jpegDir1))
+			self.fullPath = os.path.abspath(tabWidgetSetup.jpegDir1)
+			os.system("dir /b %s\*.jpeg > jpeglist.txt" % (self.fullPath))
+			os.system("touch>jpeglist_new.txt")
+			with open("jpeglist.txt") as f1:
+				self.jpegList = f1.readlines()
+			with open("jpeglist_new.txt","a") as f3:
+				for self.jpegFile in self.jpegList:
+					f3.write(self.fullPath + "\\" + self.jpegFile)
+			os.system("move jpeglist_new.txt jpeglist.txt")
 		else:
 			os.system("ls %s/*.jpeg > jpeglist.txt" % (tabWidgetSetup.jpegDir1))
 
@@ -419,9 +427,9 @@ class removeMics(QMainWindow):
 			self.label.show()
 
 		if os.path.isfile(self.jpeg) == True:
-			self.setGeometry(0, 0, self.pixmap.width() + 220,self.pixmap.height() + 25)
+			self.setGeometry(50, 50, self.pixmap.width() + 220,self.pixmap.height() + 25)
 		else:
-			self.setGeometry(0, 0, 500, 525)
+			self.setGeometry(50, 50, 500, 525)
 
 		self.nextButton = QPushButton(self)
 		self.nextButton.setText("Next (N)")
@@ -503,12 +511,29 @@ class removeMics(QMainWindow):
 	def importLog(self):
 		self.importFile = QFileDialog.getOpenFileName(self, "Import log", "." , "Log files (*.log)")
 		if self.importFile[0] != "":
-			os.system("cp %s badjpeg_selected.log" % (self.importFile[0]))
+			if os.name == 'nt':
+				self.importFile = self.importFile[0].replace("/","\\")
+				os.system("touch>importFile_new.txt")
+				with open(self.importFile) as f4:
+					self.importBad = f4.readlines()
+				with open("importFile_new.txt","a") as f5:
+					for self.importMic in self.importBad:
+						f5.write(self.fullPath + "\\" + self.importMic.rsplit("/",1)[-1].rsplit("\\",1)[-1])
+				os.system("move importFile_new.txt badjpeg_selected.log")
+			else:
+				os.system("touch importFile_new.txt")
+				with open(self.importFile[0]) as f4:
+					self.importBad = f4.readlines()
+				with open("importFile_new.txt","a") as f5:
+					for self.importMic in self.importBad:
+						f5.write(tabWidgetSetup.jpegDir1 + "/" + self.importMic.rsplit("/",1)[-1].rsplit("\\",1)[-1])
+				os.system("mv importFile_new.txt badjpeg_selected.log")
 
 	def openMic(self):
 		self.mic2open_full = QFileDialog.getOpenFileName(self, "Open", "%s" % (tabWidgetSetup.jpegDir1) , "Image files (*.jpeg)")
 		if os.name == 'nt':
-			self.mic2open = self.mic2open_full[0].rsplit("/",1)[-1]
+			self.mic2open_trunc = self.mic2open_full[0].rsplit("/",1)[-1]
+			self.mic2open = self.fullPath + "\\" + self.mic2open_trunc
 			if self.mic2open_full[0] != "":
 				self.i = self.jpeglist.index(self.mic2open + "\n")
 				self.resetGUI()
