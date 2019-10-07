@@ -391,16 +391,21 @@ class removeMics(QMainWindow):
 		self.importMenu.triggered.connect(self.importLog)
 		self.openMenu = self.fileMenu.addAction("&Open micrograph")
 		self.openMenu.triggered.connect(self.openMic)
+		
+		self.editMenu = self.menu.addMenu('&Edit')
+		self.undoSelMenu = self.editMenu.addAction("&Undo all selected")
+		self.undoSelMenu.triggered.connect(self.undoSelected)
+
 		if os.name != 'nt':
 			self.trashMenu = self.fileMenu.addAction("&Trash all selected")
 			self.trashMenu.triggered.connect(self.lastNext)
 			self.deleteMenu = self.fileMenu.addAction("&Delete all trash directories")
 			self.deleteMenu.triggered.connect(self.deleteTrash)
-			self.editMenu = self.menu.addMenu('&Edit')
-			self.undoMenu = self.editMenu.addAction("&Undo all trashed")
-			self.undoMenu.triggered.connect(self.undoTrash)
-		self.menu.show()
+			
+			self.undoTrashMenu = self.editMenu.addAction("&Undo all trashed")
+			self.undoTrashMenu.triggered.connect(self.undoTrash)
 
+		self.menu.show()
 		self.i = 0
 		self.viewJPEG()
 
@@ -520,6 +525,7 @@ class removeMics(QMainWindow):
 					for self.importMic in self.importBad:
 						f5.write(self.fullPath + "\\" + self.importMic.rsplit("/",1)[-1].rsplit("\\",1)[-1])
 				os.system("move importFile_new.txt badjpeg_selected.log")
+				self.resetGUI()
 			else:
 				os.system("touch importFile_new.txt")
 				with open(self.importFile[0]) as f4:
@@ -528,6 +534,7 @@ class removeMics(QMainWindow):
 					for self.importMic in self.importBad:
 						f5.write(tabWidgetSetup.jpegDir1 + "/" + self.importMic.rsplit("/",1)[-1].rsplit("\\",1)[-1])
 				os.system("mv importFile_new.txt badjpeg_selected.log")
+				self.resetGUI()
 
 	def openMic(self):
 		self.mic2open_full = QFileDialog.getOpenFileName(self, "Open", "%s" % (tabWidgetSetup.jpegDir1) , "Image files (*.jpeg)")
@@ -596,14 +603,21 @@ class removeMics(QMainWindow):
 			os.system("rm -rf %s/jpegTrash" % (tabWidgetSetup.jpegDir1))
 			os.system("rm -rf %s/mrcTrash" % (tabWidgetSetup.micDir1))
 
+	def undoSelected(self):
+		undoSelMessage = QMessageBox.question(self, 'Undo Selections', "Undo ALL selected micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+		if undoSelMessage == QMessageBox.Yes:
+			open("badjpeg_selected.log", "w").close()
+			self.resetGUI()
+
 	def undoTrash(self):
-		undoMessage = QMessageBox.question(self, 'Undo', "Undo all trashed micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-		if undoMessage == QMessageBox.Yes:
+		undoTrashMessage = QMessageBox.question(self, 'Undo Trash', "Undo ALL trashed micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+		if undoTrashMessage == QMessageBox.Yes:
 			if tabWidgetSetup.tiffDir1 != "" and " " not in tabWidgetSetup.tiffDir1:
 				os.system("mv %s/tiffsTrash/* %s" % (tabWidgetSetup.tiffDir1,tabWidgetSetup.tiffDir1))
 			os.system("mv %s/jpegTrash/* %s" % (tabWidgetSetup.jpegDir1,tabWidgetSetup.jpegDir1))
 			os.system("mv %s/mrcTrash/* %s" % (tabWidgetSetup.micDir1,tabWidgetSetup.micDir1))
 			open("badjpeg_selected.log", "w").close()
+			self.resetGUI()
 			
 	def saveLog(self):
 		fileNum = 0
