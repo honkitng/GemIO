@@ -1,7 +1,7 @@
 # RELION cleaup
 
 This program can be used to remove movies, micrographs and jpeg files following motion correction.
-This program uses JPEG files to view and delete micrographs; use e2proc2d.py to low pass filter and generate the JPEG files from the MRC files if they do not already exist.
+This program uses JPEG files to view and delete micrographs; use e2proc2d.py (i.e. e2proc2d.py *.mrc jpeg/@.jpeg --apix={pixel size} --process filter.lowpass.gauss:cutoff_freq=20 --meanshrink=4) to low pass filter and generate the JPEG files from the MRC files if they do not already exist.
 
 ## Requirements
 * python3.6
