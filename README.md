@@ -11,7 +11,7 @@ This program uses JPEG files to view and delete micrographs; use e2proc2d.py to 
 ## Usage
 This script is intended to run on a Linux machine with full functionality.
 * Only input TIF directory if you wish to remove TIF files
-* This program assumes the use of .tif, .mrc, and .jpeg file extensions for movies, corrected micrographs and jpeg files, respectively. .
+* This program assumes the use of .tif, .mrc, and .jpeg file extensions for movies, corrected micrographs and jpeg files, respectively.
 
 This script can be run on a Windows machine to generate the log files ONLY. This file can be imported into the program when it is run on a Linux machine with all the data.
 * To generate the log file on a Windows machine, simply select all micrographs you wish to remove and close the program when you are done.
