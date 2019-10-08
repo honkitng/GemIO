@@ -5,6 +5,7 @@ import sys
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QMainWindow, QLineEdit, QLabel, QPushButton, QRadioButton, QTabWidget, QWidget, QFormLayout, QHBoxLayout, QCheckBox, QMessageBox, QFileDialog
 from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtCore import Qt
 
 class micsLocation(QMainWindow):
 	def __init__(self):
@@ -417,19 +418,19 @@ class removeMics(QMainWindow):
 
 		self.setWindowTitle(self.jpeg)
 
+		self.label = QLabel(self)
 		if os.path.isfile(self.jpeg) == True:
-			self.label = QLabel(self)
 			self.pixmap = QPixmap(self.jpeg)
+			if os.name == 'nt':
+				self.pixmap = self.pixmap.scaled(900, 900, Qt.KeepAspectRatio)
 			self.label.setPixmap(self.pixmap)
 			self.label.resize(self.pixmap.width(),self.pixmap.height())
 			self.label.move(0,25)
-			self.label.show()
 		else:
-			self.label = QLabel(self)
 			self.label.setText("File has been trashed.")
 			self.label.resize(360,20)
 			self.label.move(50,250)
-			self.label.show()
+		self.label.show()
 
 		if os.path.isfile(self.jpeg) == True:
 			self.setGeometry(50, 50, self.pixmap.width() + 220,self.pixmap.height() + 25)
