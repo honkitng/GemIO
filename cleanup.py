@@ -6,6 +6,8 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QMainWindow, QLineEdit, QLabel, QPushButton, QRadioButton, QTabWidget, QWidget, QFormLayout, QHBoxLayout, QCheckBox, QMessageBox, QFileDialog
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt
+if os.name == 'nt':
+	import ctypes
 
 class micsLocation(QMainWindow):
 	def __init__(self):
@@ -367,7 +369,7 @@ class removeMics(QMainWindow):
 		if os.name == 'nt':
 			self.fullPath = os.path.abspath(tabWidgetSetup.jpegDir1)
 			os.system("dir /b %s\*.jpeg > jpeglist.txt" % (self.fullPath))
-			os.system("touch>jpeglist_new.txt")
+			os.system("copy nul jpeglist_new.txt")
 			with open("jpeglist.txt") as f1:
 				self.jpegList = f1.readlines()
 			with open("jpeglist_new.txt","a") as f3:
@@ -379,7 +381,7 @@ class removeMics(QMainWindow):
 
 		if os.path.isfile("badjpeg_selected.log") == False:
 			if os.name == 'nt':
-				os.system("touch>badjpeg_selected.log")
+				os.system("copy nul badjpeg_selected.log")
 			else:
 				os.system("touch badjpeg_selected.log")
 
@@ -422,7 +424,9 @@ class removeMics(QMainWindow):
 		if os.path.isfile(self.jpeg) == True:
 			self.pixmap = QPixmap(self.jpeg)
 			if os.name == 'nt':
-				self.pixmap = self.pixmap.scaled(900, 900, Qt.KeepAspectRatio)
+				widRes = ctypes.windll.user32.GetSystemMetrics(0)
+				lenRes = ctypes.windll.user32.GetSystemMetrics(1)
+				self.pixmap = self.pixmap.scaled(widRes - 200, lenRes - 200, Qt.KeepAspectRatio)
 			self.label.setPixmap(self.pixmap)
 			self.label.resize(self.pixmap.width(),self.pixmap.height())
 			self.label.move(0,25)
@@ -519,7 +523,7 @@ class removeMics(QMainWindow):
 		if self.importFile[0] != "":
 			if os.name == 'nt':
 				self.importFile = self.importFile[0].replace("/","\\")
-				os.system("touch>importFile_new.txt")
+				os.system("copy nul importFile_new.txt")
 				with open(self.importFile) as f4:
 					self.importBad = f4.readlines()
 				with open("importFile_new.txt","a") as f5:
