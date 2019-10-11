@@ -426,7 +426,11 @@ class removeMics(QMainWindow):
 			if os.name == 'nt':
 				widRes = ctypes.windll.user32.GetSystemMetrics(0)
 				lenRes = ctypes.windll.user32.GetSystemMetrics(1)
-				self.pixmap = self.pixmap.scaled(widRes - 200, lenRes - 200, Qt.KeepAspectRatio)
+			else:
+				screenRes = app.desktop().screenGeometry()
+				widRes, lenRes = screenRes.width(), screenRes.height()
+			print(widRes, lenRes)
+			self.pixmap = self.pixmap.scaled(widRes - 200, lenRes - 200, Qt.KeepAspectRatio)
 			self.label.setPixmap(self.pixmap)
 			self.label.resize(self.pixmap.width(),self.pixmap.height())
 			self.label.move(0,25)
