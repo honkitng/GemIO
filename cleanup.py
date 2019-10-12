@@ -6,8 +6,6 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QMainWindow, QLineEdit, QLabel, QPushButton, QRadioButton, QTabWidget, QWidget, QFormLayout, QHBoxLayout, QCheckBox, QMessageBox, QFileDialog
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt
-if os.name == 'nt':
-	import ctypes
 
 class micsLocation(QMainWindow):
 	def __init__(self):
@@ -423,13 +421,9 @@ class removeMics(QMainWindow):
 		self.label = QLabel(self)
 		if os.path.isfile(self.jpeg) == True:
 			self.pixmap = QPixmap(self.jpeg)
-			if os.name == 'nt':
-				widRes = ctypes.windll.user32.GetSystemMetrics(0)
-				lenRes = ctypes.windll.user32.GetSystemMetrics(1)
-			else:
-				screenRes = app.desktop().screenGeometry()
-				widRes, lenRes = screenRes.width(), screenRes.height()
-			self.pixmap = self.pixmap.scaled(widRes - 150, lenRes - 150, Qt.KeepAspectRatio)
+			self.screenRes = app.desktop().screenGeometry()
+			self.widRes, self.lenRes = self.screenRes.width(), self.screenRes.height()
+			self.pixmap = self.pixmap.scaled(self.widRes - 150, self.lenRes - 150, Qt.KeepAspectRatio)
 			self.label.setPixmap(self.pixmap)
 			self.label.resize(self.pixmap.width(),self.pixmap.height())
 			self.label.move(0,25)
