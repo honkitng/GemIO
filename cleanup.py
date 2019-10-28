@@ -47,7 +47,7 @@ class tabWidgetSetup(QWidget):
 	def motioncorUI(self):
 		self.motioncorTab.layout = QFormLayout(self)
 
-		if os.name != 'nt':
+		if sys.platform == 'linux':
 			self.tiffLabel1 = QLabel(self)
 			self.tiffLabel1.setText("TIF directory:")
 			self.tiffText1 = QLineEdit(self)
@@ -71,7 +71,7 @@ class tabWidgetSetup(QWidget):
 		self.motioncorTab.setLayout(self.motioncorTab.layout)
 
 	def motioncorGoNext(self):
-		if os.name == 'nt':
+		if sys.platform == 'win32' or 'darwin':
 			tabWidgetSetup.tiffDir1 = "None_Entered"
 			tabWidgetSetup.micDir1 = "None_Entered"
 		else:
@@ -366,7 +366,7 @@ class removeMics(QMainWindow):
 
 		self.setWindowFlag(QtCore.Qt.WindowMaximizeButtonHint, False)
 
-		if os.name == 'nt':
+		if sys.platform == 'win32':
 			self.fullPath = os.path.abspath(tabWidgetSetup.jpegDir1)
 			os.system("dir /b %s\*.jpeg > jpeglist.txt" % (self.fullPath))
 			os.system("copy nul jpeglist_new.txt")
@@ -380,7 +380,7 @@ class removeMics(QMainWindow):
 			os.system("ls %s/*.jpeg > jpeglist.txt" % (tabWidgetSetup.jpegDir1))
 
 		if os.path.isfile("badjpeg_selected.log") == False:
-			if os.name == 'nt':
+			if sys.platform == 'win32':
 				os.system("copy nul badjpeg_selected.log")
 			else:
 				os.system("touch badjpeg_selected.log")
@@ -398,8 +398,10 @@ class removeMics(QMainWindow):
 		self.editMenu = self.menu.addMenu('&Edit')
 		self.undoSelMenu = self.editMenu.addAction("&Undo all selected")
 		self.undoSelMenu.triggered.connect(self.undoSelected)
+		self.invertSelMenu = self.editMenu.addAction("&Invert selection")
+		self.invertSelMenu.triggered.connect(self.invertSelected)
 
-		if os.name != 'nt':
+		if sys.platform == 'linux':
 			self.trashMenu = self.fileMenu.addAction("&Trash all selected")
 			self.trashMenu.triggered.connect(self.lastNext)
 			self.deleteMenu = self.fileMenu.addAction("&Delete all trash directories")
@@ -450,7 +452,7 @@ class removeMics(QMainWindow):
 		if self.jpeglist[self.i] != self.jpeglist[-1]:
 			self.nextButton.clicked.connect(self.nextMic)
 		else:
-			if os.name != 'nt':
+			if sys.platform == 'linux':
 				self.nextButton.clicked.connect(self.lastNext)
 		self.nextButton.show()
 
@@ -495,7 +497,7 @@ class removeMics(QMainWindow):
 			if self.jpeglist[self.i] != self.jpeglist[-1]:
 				self.nextMic()
 			else:
-				if os.name != 'nt':
+				if sys.platform == 'linux':
 					self.lastNext()
 		elif event.key() == QtCore.Qt.Key_S:
 			self.deleteMic()
@@ -520,7 +522,7 @@ class removeMics(QMainWindow):
 	def importLog(self):
 		self.importFile = QFileDialog.getOpenFileName(self, "Import log", "." , "Log files (*.log)")
 		if self.importFile[0] != "":
-			if os.name == 'nt':
+			if sys.platform == 'win32':
 				self.importFile = self.importFile[0].replace("/","\\")
 				os.system("copy nul importFile_new.txt")
 				with open(self.importFile) as f4:
@@ -542,7 +544,7 @@ class removeMics(QMainWindow):
 
 	def openMic(self):
 		self.mic2open_full = QFileDialog.getOpenFileName(self, "Open", "%s" % (tabWidgetSetup.jpegDir1) , "Image files (*.jpeg)")
-		if os.name == 'nt':
+		if sys.platform == 'win32':
 			self.mic2open_trunc = self.mic2open_full[0].rsplit("/",1)[-1]
 			self.mic2open = self.fullPath + "\\" + self.mic2open_trunc
 			if self.mic2open_full[0] != "":
@@ -590,13 +592,11 @@ class removeMics(QMainWindow):
 				for line in lines:
 					if line.strip("\n") != self.jpeglist[self.i].strip("\n"):
 						f2.write(line)
-				self.badjpeg = f2.readlines()
 		else:
 			self.selectCheck.setChecked(True)
 			with open("badjpeg_selected.log", "a+") as f2:
 				f2.write(self.jpeglist[self.i])
 				f2.seek(0)
-				self.badjpeg = f2.readlines()
 		self.selectCheck.show()
 
 	def deleteTrash(self):
@@ -608,9 +608,22 @@ class removeMics(QMainWindow):
 			os.system("rm -rf %s/mrcTrash" % (tabWidgetSetup.micDir1))
 
 	def undoSelected(self):
-		undoSelMessage = QMessageBox.question(self, 'Undo Selections', "Undo ALL selected micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+		undoSelMessage = QMessageBox.question(self, 'Undo', "Undo ALL selected micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
 		if undoSelMessage == QMessageBox.Yes:
 			open("badjpeg_selected.log", "w").close()
+			self.resetGUI()
+
+	def invertSelected(self):
+		invertSelMessage = QMessageBox.question(self, 'Invert', "Invert selection?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+		if invertSelMessage == QMessageBox.Yes:
+			for line in self.jpeglist:
+				if line not in self.badjpeg:
+					with open("badjpeg_new.log" , "a+") as f6:
+						f6.write(line)
+			if sys.platform == 'win32':
+				os.system("move badjpeg_new.log badjpeg_selected.log")
+			else:
+				os.system("mv badjpeg_new.log badjpeg_selected.log")
 			self.resetGUI()
 
 	def undoTrash(self):
@@ -627,7 +640,7 @@ class removeMics(QMainWindow):
 		fileNum = 0
 		while os.path.isfile("badjpeg_deleted_%s.log" % (fileNum)) == True:
 			fileNum += 1
-		if os.name == 'nt':
+		if sys.platform == 'win32':
 			os.system("move badjpeg_selected.log badjpeg_deleted_%s.log" % (fileNum))
 			os.system("del jpeglist.txt")
 		else:
@@ -635,7 +648,7 @@ class removeMics(QMainWindow):
 			os.system("rm jpeglist.txt")
 			
 	def closeEvent(self, event):
-		if os.name == 'nt':
+		if sys.platform == 'win32':
 			self.endMessage = QMessageBox.question(self, 'Save', "Save and close?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
 			if self.endMessage == QMessageBox.Yes:
 				self.saveLog()

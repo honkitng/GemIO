@@ -16,6 +16,6 @@ Notes:
 - Only input TIF directory if you wish to remove TIF files
 - This program assumes the use of .tif, .mrc, and .jpeg file extensions for movies, corrected micrographs and jpeg files, respectively.
 
-### Windows
-This program can be run on Windows to generate the log files ONLY. This file can be imported into the program when it is run on a Linux machine with all the data.
-* To generate the log file on Windows, simply select all micrographs you wish to remove and close the program when you are done.
+### Windows and Linux
+This program can be run on Windows and Linux to generate the log files ONLY. This file can be imported into the program when it is run on a Linux machine with all the data.
+* To generate the log file on Windows and Linux, select all micrographs you wish to remove and close the program when you are done.
