@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.6
 
-#Last modified 10/18/19 by Honkit Ng.
+#Last modified 10/27/19 by Honkit Ng.
 
 import os
 import sys
@@ -575,7 +575,7 @@ class removeMics(QMainWindow):
 					if tabWidgetSetup.tiffDir1 != "":
 						tiffName = jpegName.replace(".jpeg",".tif")
 						tiffName = tiffName.replace(tabWidgetSetup.jpegDir1, tabWidgetSetup.tiffDir1)
-					mrcName = jpegName.replace(".jpeg",".mrc")
+					mrcName = jpegName.replace(".jpeg","*")
 					mrcName = mrcName.replace(tabWidgetSetup.jpegDir1, tabWidgetSetup.micDir1)
 
 					if tabWidgetSetup.tiffDir1 != "" and " " not in tabWidgetSetup.tiffDir1:

@@ -1,6 +1,6 @@
 # RELION cleaup
 
-This program can be used to remove movies, micrographs and jpeg files following motion correction.
+This program can be used to remove movies, micrographs (with associated relion generated files) and jpeg files following motion correction.
 
 ## Requirements
 * python3.6
