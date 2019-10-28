@@ -544,19 +544,22 @@ class removeMics(QMainWindow):
 
 	def openMic(self):
 		self.mic2open_full = QFileDialog.getOpenFileName(self, "Open", "%s" % (tabWidgetSetup.jpegDir1) , "Image files (*.jpeg)")
-		if sys.platform == 'win32':
-			self.mic2open_trunc = self.mic2open_full[0].rsplit("/",1)[-1]
-			self.mic2open = self.fullPath + "\\" + self.mic2open_trunc
-			if self.mic2open_full[0] != "":
-				self.i = self.jpeglist.index(self.mic2open + "\n")
-				self.resetGUI()
-		else:
-			self.mic2open_trunc = self.mic2open_full[0].rsplit("/",1)[-1]
-			self.mic2open_path = self.jpeg.rsplit("/",1)[0]
-			self.mic2open = self.mic2open_path + "/" + self.mic2open_trunc
-			if self.mic2open_full[0] != "":
-				self.i = self.jpeglist.index(self.mic2open + "\n")
-				self.resetGUI()
+		try:
+			if sys.platform == 'win32':
+				self.mic2open_trunc = self.mic2open_full[0].rsplit("/",1)[-1]
+				self.mic2open = self.fullPath + "\\" + self.mic2open_trunc
+				if self.mic2open_full[0] != "":
+					self.i = self.jpeglist.index(self.mic2open + "\n")
+					self.resetGUI()
+			else:
+				self.mic2open_trunc = self.mic2open_full[0].rsplit("/",1)[-1]
+				self.mic2open_path = self.jpeg.rsplit("/",1)[0]
+				self.mic2open = self.mic2open_path + "/" + self.mic2open_trunc
+				if self.mic2open_full[0] != "":
+					self.i = self.jpeglist.index(self.mic2open + "\n")
+					self.resetGUI()
+		except ValueError:
+			missMic = QMessageBox.warning(self, 'Error', "Micrograph not originally in input directory", QMessageBox.Ok)
 
 	def lastNext(self):
 		deleteMessage = QMessageBox.question(self, 'Trash', "Trash all selected micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
