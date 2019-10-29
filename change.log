@@ -1,3 +1,6 @@
+10/29/19
+-fixed bug with Linux error handling
+
 10/28/19
 -added executable file (.exe file) for Windows to run without python and PyQT5 installed (still testing)
 -added error handling to initial inputs
