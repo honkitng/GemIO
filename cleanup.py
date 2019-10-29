@@ -71,28 +71,31 @@ class tabWidgetSetup(QWidget):
 		self.motioncorTab.setLayout(self.motioncorTab.layout)
 
 	def motioncorGoNext(self):
-		if sys.platform == 'win32' or 'darwin':
+		if sys.platform != 'linux':
 			tabWidgetSetup.tiffDir1 = "None_Entered"
 			tabWidgetSetup.micDir1 = "None_Entered"
 		else:
 			tabWidgetSetup.tiffDir1 = self.tiffText1.text()
 			tabWidgetSetup.micDir1 = self.micText1.text()
 		tabWidgetSetup.jpegDir1 = self.jpegText1.text()
-		try:
-			if sys.platform == 'linux' and tiffDir1 != '' and not any(files.endswith(".tif") for files in os.listdir("%s" % (tabWidgetSetup.tiffDir1))):
-				noTIFF = QMessageBox.warning(self, 'Error', "There are no tif files in the input directory.\n\n Please enter a different directory.", QMessageBox.Ok)
-			else:
-				if sys.platform == 'linux' and not any(files.endswith(".mrc") for files in os.listdir("%s" % (tabWidgetSetup.micDir1))):
-					noTIFF = QMessageBox.warning(self, 'Error', "There are no mrc files in the input directory.\n\n Please enter a different directory.", QMessageBox.Ok)
+		if " " not in tabWidgetSetup.tiffDir1 and " " not in tabWidgetSetup.micDir1 and " " not in tabWidgetSetup.jpegDir1:
+			try:
+				if sys.platform == 'linux' and tabWidgetSetup.tiffDir1 != '' and not any(files.endswith(".tif") for files in os.listdir("%s" % (tabWidgetSetup.tiffDir1))):
+					noTIFF = QMessageBox.warning(self, 'Error', "There are no tif files in the input directory.\n\n Please enter a different directory.", QMessageBox.Ok)
 				else:
-					if any(files.endswith(".jpeg") for files in os.listdir("%s" % (tabWidgetSetup.jpegDir1))):
-						window1.hide()
-						self.rmMics = removeMics(self)
-						self.rmMics.show()
+					if sys.platform == 'linux' and not any(files.endswith(".mrc") for files in os.listdir("%s" % (tabWidgetSetup.micDir1))):
+						noTIFF = QMessageBox.warning(self, 'Error', "There are no mrc files in the input directory.\n\n Please enter a different directory.", QMessageBox.Ok)
 					else:
-						noJPEG = QMessageBox.warning(self, 'Error', "There are no jpeg files in the input directory.\n\n Please enter a different directory.", QMessageBox.Ok)
-		except (FileNotFoundError, NameError):
-			noDir = QMessageBox.warning(self, 'Error', "Invalid directory entered.\n\n Please enter a different directory.", QMessageBox.Ok)
+						if any(files.endswith(".jpeg") for files in os.listdir("%s" % (tabWidgetSetup.jpegDir1))):
+							window1.hide()
+							self.rmMics = removeMics(self)
+							self.rmMics.show()
+						else:
+							noJPEG = QMessageBox.warning(self, 'Error', "There are no jpeg files in the input directory.\n\n Please enter a different directory.", QMessageBox.Ok)
+			except (FileNotFoundError, NameError):
+				noDir = QMessageBox.warning(self, 'Error', "Invalid directory entered.\n\n Please enter a different directory.", QMessageBox.Ok)
+		else:
+			spaceWarning = QMessageBox.warning(self, 'Error', "Please remove all spaces from inputs.", QMessageBox.Ok)
 
 	def ctfUI(self):
 		self.ctfTab.layout = QFormLayout(self)
