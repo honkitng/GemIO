@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.6
 
-#Last modified 10/28/19 by Honkit Ng.
+#Last modified 10/29/19 by Honkit Ng.
 
 import os
 import sys
@@ -91,7 +91,7 @@ class tabWidgetSetup(QWidget):
 						self.rmMics.show()
 					else:
 						noJPEG = QMessageBox.warning(self, 'Error', "There are no jpeg files in the input directory.\n Please enter a different directory.", QMessageBox.Ok)
-		except FileNotFoundError:
+		except (FileNotFoundError, NameError):
 			noDir = QMessageBox.warning(self, 'Error', "Invalid directory entered.\n Please enter a different directory.", QMessageBox.Ok)
 
 	def ctfUI(self):
