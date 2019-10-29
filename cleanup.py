@@ -78,9 +78,21 @@ class tabWidgetSetup(QWidget):
 			tabWidgetSetup.tiffDir1 = self.tiffText1.text()
 			tabWidgetSetup.micDir1 = self.micText1.text()
 		tabWidgetSetup.jpegDir1 = self.jpegText1.text()
-		window1.hide()
-		self.rmMics = removeMics(self)
-		self.rmMics.show()
+		try:
+			if sys.platform == 'linux' and tiffDir1 != '' and not any(files.endswith(".tif") for files in os.listdir("%s" % (tabWidgetSetup.tiffDir1))):
+				noTIFF = QMessageBox.warning(self, 'Error', "There are no tif files in the input directory.\n Please enter a different directory.", QMessageBox.Ok)
+			else:
+				if sys.platform == 'linux' and not any(files.endswith(".mrc") for files in os.listdir("%s" % (tabWidgetSetup.micDir1))):
+					noTIFF = QMessageBox.warning(self, 'Error', "There are no mrc files in the input directory.\n Please enter a different directory.", QMessageBox.Ok)
+				else:
+					if any(files.endswith(".jpeg") for files in os.listdir("%s" % (tabWidgetSetup.jpegDir1))):
+						window1.hide()
+						self.rmMics = removeMics(self)
+						self.rmMics.show()
+					else:
+						noJPEG = QMessageBox.warning(self, 'Error', "There are no jpeg files in the input directory.\n Please enter a different directory.", QMessageBox.Ok)
+		except FileNotFoundError:
+			noDir = QMessageBox.warning(self, 'Error', "Invalid directory entered.\n Please enter a different directory.", QMessageBox.Ok)
 
 	def ctfUI(self):
 		self.ctfTab.layout = QFormLayout(self)
@@ -559,7 +571,7 @@ class removeMics(QMainWindow):
 					self.i = self.jpeglist.index(self.mic2open + "\n")
 					self.resetGUI()
 		except ValueError:
-			missMic = QMessageBox.warning(self, 'Error', "Micrograph not originally in input directory", QMessageBox.Ok)
+			missMic = QMessageBox.warning(self, 'Error', "Micrograph not originally in input directory.\n Please select a different micrograph.", QMessageBox.Ok)
 
 	def lastNext(self):
 		deleteMessage = QMessageBox.question(self, 'Trash', "Trash all selected micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
