@@ -1,0 +1,15 @@
+10/28/19
+-added executable file (.exe file) for Windows to run without python and PyQT5 installed (still testing)
+-added error handling to initial inputs
+
+10/27/19
+-added OSX compatibility
+-added option to invert selection in "Edit" menu
+-now removes all files associated with bad micrographs that were generated with relion (ie. eps, star and non dose weighted micrograph files)
+-added error handling to "Open" option
+
+10/6/19
+-Fixed bugs with Windows and Linux compatibility
+
+10/5/19
+-added Windows compatibility
