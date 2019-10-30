@@ -7,7 +7,7 @@ This program can be used to remove movies, micrographs (with associated relion g
 * PyQt5 (5.9.2) module - install using "pip3.6 install PyQt5" after installing python3.6
 
 Notes:
-- Not necessary if running on Windows or Linux (currently unavailable for Mac) with the executable files (located in their respective directory).
+- Not necessary if running on Windows or Linux (currently unavailable for Mac) with the executable files (located in their respective directory) but running the python file is recommended.
 
 ## Usage
 ### Linux
