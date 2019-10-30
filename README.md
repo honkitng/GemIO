@@ -3,11 +3,15 @@
 This program can be used to remove movies, micrographs (with associated relion generated files) and jpeg files following motion correction.
 
 ## Requirements
+### cleanup.py file (Recommended)
 * python3.6
 * PyQt5 (5.9.2) module - install using "pip3.6 install PyQt5" after installing python3.6
 
-Notes:
-- Not necessary if running on Windows or Linux (currently unavailable for Mac) with the executable files (located in their respective directory) but running the python file is recommended.
+### Precompiled binaries (only available for Windows and Linux)
+* None
+
+Note:
+- Only use if cannot install python3.6 or the PyQt5 module. Otherwise, the python file is more reliable.
 
 ## Usage
 ### Linux
