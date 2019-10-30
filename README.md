@@ -1,4 +1,4 @@
-# RELION cleaup
+# RELION cleanup
 
 This program can be used to remove movies, micrographs (with associated relion generated files) and jpeg files following motion correction.
 
@@ -7,8 +7,7 @@ This program can be used to remove movies, micrographs (with associated relion g
 * PyQt5 (5.9.2) module - install using "pip3.6 install PyQt5" after installing python3.6
 
 Notes:
-- Not necessary if running on Windows with the .exe file
-
+- Not necessary if running on Windows or Linux (currently unavailable for Mac) with the executable files (located in their respective directory).
 
 ## Usage
 ### Linux
@@ -22,4 +21,3 @@ Notes:
 ### Windows and Mac
 This program can be run on Windows and Mac to generate the log files ONLY. This file can be imported into the program when it is run on a Linux machine with all the data.
 * To generate the log file on Windows and Mac, select all micrographs you wish to remove and close the program when you are done.
-* The .exe file can be used in place of the .py file on Windows without needing python or the PyQt5 module to run.
