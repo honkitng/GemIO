@@ -47,7 +47,7 @@ class tabWidgetSetup(QWidget):
 	def motioncorUI(self):
 		self.motioncorTab.layout = QFormLayout()
 
-		if sys.platform != 'linux':
+		if sys.platform == 'linux':
 			self.tiffLabel1 = QLabel()
 			self.tiffLabel1.setText("TIF directory:")
 			self.tiffEntry1 = QHBoxLayout()
