@@ -45,30 +45,57 @@ class tabWidgetSetup(QWidget):
 		self.setLayout(self.layout)
 
 	def motioncorUI(self):
-		self.motioncorTab.layout = QFormLayout(self)
+		self.motioncorTab.layout = QFormLayout()
 
-		if sys.platform == 'linux':
-			self.tiffLabel1 = QLabel(self)
+		if sys.platform != 'linux':
+			self.tiffLabel1 = QLabel()
 			self.tiffLabel1.setText("TIF directory:")
-			self.tiffText1 = QLineEdit(self)
-			self.motioncorTab.layout.addRow(self.tiffLabel1, self.tiffText1)
+			self.tiffEntry1 = QHBoxLayout()
+			self.tiffText1 = QLineEdit()
+			self.tiffEntry1.addWidget(self.tiffText1)
+			self.tiffButton1 = QPushButton()
+			self.tiffButton1.setText("Browse")
+			self.tiffButton1.clicked.connect(lambda:self.folderOpen(1))
+			self.tiffEntry1.addWidget(self.tiffButton1)
+			self.motioncorTab.layout.addRow(self.tiffLabel1, self.tiffEntry1)
 
-			self.micLabel1 = QLabel(self)
+			self.micLabel1 = QLabel()
 			self.micLabel1.setText("Corrected micrographs directory:")
-			self.micText1 = QLineEdit(self)
-			self.motioncorTab.layout.addRow(self.micLabel1, self.micText1)
+			self.micEntry1 = QHBoxLayout()
+			self.micText1 = QLineEdit()
+			self.micEntry1.addWidget(self.micText1)
+			self.micButton1 = QPushButton()
+			self.micButton1.setText("Browse")
+			self.micButton1.clicked.connect(lambda:self.folderOpen(2))
+			self.micEntry1.addWidget(self.micButton1)
+			self.motioncorTab.layout.addRow(self.micLabel1, self.micEntry1)
 
-		self.jpegLabel1 = QLabel(self)
+		self.jpegLabel1 = QLabel()
 		self.jpegLabel1.setText("JPEG directory:")
-		self.jpegText1 = QLineEdit(self)
-		self.motioncorTab.layout.addRow(self.jpegLabel1, self.jpegText1)
+		self.jpegEntry1 = QHBoxLayout()
+		self.jpegText1 = QLineEdit()
+		self.jpegEntry1.addWidget(self.jpegText1)
+		self.jpegButton1 = QPushButton()
+		self.jpegButton1.setText("Browse")
+		self.jpegButton1.clicked.connect(lambda:self.folderOpen(3))
+		self.jpegEntry1.addWidget(self.jpegButton1)
+		self.motioncorTab.layout.addRow(self.jpegLabel1, self.jpegEntry1)
 
-		self.motioncorSubmit = QPushButton(self)
+		self.motioncorSubmit = QPushButton()
 		self.motioncorSubmit.setText("Submit")
 		self.motioncorSubmit.clicked.connect(self.motioncorGoNext)
 		self.motioncorTab.layout.addRow(self.motioncorSubmit)
 
 		self.motioncorTab.setLayout(self.motioncorTab.layout)
+
+	def folderOpen(self,x):
+		self.openFolder = QFileDialog.getExistingDirectory(self, "Open Directory")
+		if x == 1:
+			self.tiffText1.setText(self.openFolder)
+		elif x == 2:
+			self.micText1.setText(self.openFolder)
+		elif x ==3:
+			self.jpegText1.setText(self.openFolder)
 
 	def motioncorGoNext(self):
 		if sys.platform != 'linux':
