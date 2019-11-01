@@ -473,16 +473,13 @@ class removeMics(QMainWindow):
 			self.label.setPixmap(self.pixmap)
 			self.label.resize(self.pixmap.width(),self.pixmap.height())
 			self.label.move(0,25)
+			self.setGeometry(50, 50, self.pixmap.width() + 220,self.pixmap.height() + 25)
 		else:
 			self.label.setText("File has been trashed.")
 			self.label.resize(360,20)
 			self.label.move(50,250)
-		self.label.show()
-
-		if os.path.isfile(self.jpeg) == True:
-			self.setGeometry(50, 50, self.pixmap.width() + 220,self.pixmap.height() + 25)
-		else:
 			self.setGeometry(50, 50, 500, 525)
+		self.label.show()
 
 		self.nextButton = QPushButton(self)
 		self.nextButton.setText("Next (N)")
@@ -631,6 +628,7 @@ class removeMics(QMainWindow):
 	def deleteMic(self):
 		if self.jpeglist[self.i] in self.badjpeg:
 			self.selectCheck.setChecked(False)
+			self.label.setStyleSheet("QLabel {border: 0px solid red;}")
 			with open("badjpeg_selected.log", "r") as f2:
 				lines = f2.readlines()
 			with open("badjpeg_selected.log", "w+") as f2:
@@ -639,9 +637,12 @@ class removeMics(QMainWindow):
 						f2.write(line)
 		else:
 			self.selectCheck.setChecked(True)
+			self.label.setStyleSheet("QLabel {border: 5px solid red;}")
 			with open("badjpeg_selected.log", "a+") as f2:
 				f2.write(self.jpeglist[self.i])
 				f2.seek(0)
+		with open("badjpeg_selected.log") as f2:
+			self.badjpeg = f2.readlines()
 		self.selectCheck.show()
 
 	def deleteTrash(self):

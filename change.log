@@ -1,3 +1,9 @@
+11/1/19
+-fixed bug with Windows that did not update the selection if pressed more than once
+
+10/31/19
+-added "Browse" buttons when selecting directories
+
 10/29/19
 -fixed bug with Linux error handling
 -added executable file for Linux to run without python and PyQt5 installed
