@@ -11,7 +11,7 @@ This program can be used to remove movies, micrographs (with associated relion g
 * None
 
 Note:
-- Only use if cannot install python3.6 or the PyQt5 module. Otherwise, the python file is more reliable.
+- Only use if cannot install python3.6 or the PyQt5 module. Otherwise, the python file is more reliable and up to date.
 
 ## Usage
 ### Linux
