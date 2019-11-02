@@ -524,8 +524,10 @@ class removeMics(QMainWindow):
 		self.selectCheck.setEnabled(False)
 		if self.jpeglist[self.i] in self.badjpeg:
 			self.selectCheck.setChecked(True)
+			self.label.setStyleSheet("QLabel {border: 5px solid red;}")
 		else:
 			self.selectCheck.setChecked(False)
+			self.label.setStyleSheet("QLabel {border: 0px solid red;}")
 		self.selectCheck.show()
 
 	def keyPressEvent(self, event):

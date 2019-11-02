@@ -1,4 +1,5 @@
 11/1/19
+-added border around selected micrographs
 -fixed bug with Windows that did not update the selection if pressed more than once
 
 10/31/19
