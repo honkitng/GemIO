@@ -127,8 +127,12 @@ class tabWidgetSetup(QWidget):
 			tabWidgetSetup.micDir1 = self.micText1.text()
 		tabWidgetSetup.jpegDir1 = self.jpegText1.text()
 		if self.multiSelect1.currentText() == "Yes":
-			tabWidgetSetup.jpegColumns1 = int(self.columnsText1.text())
-			tabWidgetSetup.jpegScaling1 = float(self.scaleText1.text())
+			try:
+				tabWidgetSetup.jpegColumns1 = int(self.columnsText1.text())
+				tabWidgetSetup.jpegScaling1 = float(self.scaleText1.text())
+				badNumbers = 0
+			except ValueError:
+				badNumbers = 1
 		if " " not in tabWidgetSetup.tiffDir1 and " " not in tabWidgetSetup.micDir1 and " " not in tabWidgetSetup.jpegDir1:
 			try:
 				if sys.platform == 'linux' and tabWidgetSetup.tiffDir1 != '' and not any(files.endswith(".tif") for files in os.listdir("%s" % (tabWidgetSetup.tiffDir1))):
@@ -138,16 +142,20 @@ class tabWidgetSetup(QWidget):
 						noTIFF = QMessageBox.warning(self, 'Error', "There are no mrc files in the input directory.\n\n Please enter a different directory.", QMessageBox.Ok)
 					else:
 						if any(files.endswith(".jpeg") for files in os.listdir("%s" % (tabWidgetSetup.jpegDir1))):
-							window1.hide()
 							if self.multiSelect1.currentText() == "Yes":
-								self.rmMics = removeMics2(self)
-								self.rmMics.show()
+								if badNumbers == 0:
+									window1.hide()
+									self.rmMics = removeMics2(self)
+									self.rmMics.show()
+								else:
+									numWarning = QMessageBox.warning(self, 'Error', "Invalid number entered for columns/scaling.", QMessageBox.Ok)
 							else:
-								self.rmMics = removeMics1(self)
-								self.rmMics.show()
+									window1.hide()
+									self.rmMics = removeMics1(self)
+									self.rmMics.show()
 						else:
 							noJPEG = QMessageBox.warning(self, 'Error', "There are no jpeg files in the input directory.\n\n Please enter a different directory.", QMessageBox.Ok)
-			except (FileNotFoundError, NameError):
+			except FileNotFoundError:
 				noDir = QMessageBox.warning(self, 'Error', "Invalid directory entered.\n\n Please enter a different directory.", QMessageBox.Ok)
 		else:
 			spaceWarning = QMessageBox.warning(self, 'Error', "Please remove all spaces from inputs.", QMessageBox.Ok)
@@ -504,7 +512,7 @@ class removeMics1(QMainWindow):
 			self.setGeometry(50, 50, self.pixmap.width() + 220,self.pixmap.height() + 25)
 		else:
 			self.label.setText("File has been trashed.")
-			self.label.resize(360,20)
+			self.label.resize(150,20)
 			self.label.move(50,250)
 			self.setGeometry(50, 50, 500, 525)
 		self.label.show()
