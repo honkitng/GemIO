@@ -1,13 +1,13 @@
 #!/usr/bin/env python3.6
 
-#Last modified 11/07/19 by Honkit Ng.
+#Last modified 11/08/19 by Honkit Ng.
 
 import os
 import sys
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtWidgets import QMainWindow, QLineEdit, QLabel, QPushButton, QRadioButton, QTabWidget, QWidget, QFormLayout, QHBoxLayout, QVBoxLayout, QCheckBox, QMessageBox, QFileDialog, QScrollArea, QWidget, QComboBox
+from PyQt5.QtWidgets import QMainWindow, QLineEdit, QLabel, QPushButton, QRadioButton, QTabWidget, QWidget, QFormLayout, QHBoxLayout, QVBoxLayout, QCheckBox, QMessageBox, QFileDialog, QScrollArea, QWidget, QComboBox, QProgressBar
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QThread
 
 class micsLocation(QMainWindow):
 	def __init__(self):
@@ -144,15 +144,19 @@ class tabWidgetSetup(QWidget):
 						if any(files.endswith(".jpeg") for files in os.listdir("%s" % (tabWidgetSetup.jpegDir1))):
 							if self.multiSelect1.currentText() == "Yes":
 								if badNumbers == 0:
-									window1.hide()
+									self.motioncorSubmit.setEnabled(False)
+									self.progressBar = QProgressBar()
+									self.progressBar.setRange(0,0)
+									self.motioncorTab.layout.addRow(self.progressBar)
 									self.rmMics = removeMics2(self)
 									self.rmMics.show()
+									window1.hide()
 								else:
 									numWarning = QMessageBox.warning(self, 'Error', "Invalid number entered for columns/scaling.", QMessageBox.Ok)
 							else:
-									window1.hide()
 									self.rmMics = removeMics1(self)
 									self.rmMics.show()
+									window1.hide()
 						else:
 							noJPEG = QMessageBox.warning(self, 'Error', "There are no jpeg files in the input directory.\n\n Please enter a different directory.", QMessageBox.Ok)
 			except FileNotFoundError:
@@ -843,6 +847,7 @@ class removeMics2(QMainWindow):
 		self.scrollVBox.addWidget(self.scrollHWidget)
 		for jpegFile in self.labelList:
 			self.labelList[jpegFile].mousePressEvent = lambda event, pixLabel = self.labelList[jpegFile], jpegFile = jpegFile: self.clickLabel(event,pixLabel,jpegFile)
+		QtWidgets.QApplication.processEvents()
 		try:
 			self.jpeglist[self.i].replace("\n","")
 			self.i = self.i + tabWidgetSetup.jpegColumns1
