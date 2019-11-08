@@ -1,3 +1,8 @@
+11/7/19
+-added option to display multiple micrographs
+-added exceptions handling for invalid column number and scaling inputs
+-minor bug fixes
+
 11/1/19
 -added border around selected micrographs
 -fixed bug with Windows that did not update the selection if pressed more than once
