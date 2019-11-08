@@ -1,3 +1,6 @@
+11/8/19
+-added progress bar to indicate when images are being loaded into multi-view grid after initial set up
+
 11/7/19
 -added option to display multiple micrographs
 -added exceptions handling for invalid column number and scaling inputs
