@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.6
 
-#Last modified 11/08/19 by Honkit Ng.
+#Last modified 11/18/19 by Honkit Ng.
 
 import os
 import sys
@@ -29,17 +29,22 @@ class tabWidgetSetup(QWidget):
 
 		self.tabs = QTabWidget()
 		self.motioncorTab = QWidget()
-		self.ctfTab = QWidget()
-		self.relionTab = QWidget()
+		self.jpegTab = QWidget()
+		#self.ctfTab = QWidget()
+		#self.relionTab = QWidget()
 
-		self.tabs.addTab(self.motioncorTab,"Remove with JPEG")
-		self.tabs.addTab(self.ctfTab,"Remove with JPEG and CTF")
-		self.tabs.addTab(self.relionTab,"Relion GUI")
+		self.tabs.addTab(self.motioncorTab,"Remove with JPEG's")
 		self.motioncorUI()
-		self.ctfUI()
-		self.relionUI()
-		self.tabs.setTabEnabled(1,False)
-		self.tabs.setTabEnabled(2,False)
+		if sys.platform == 'linux':
+			self.tabs.addTab(self.jpegTab,"Generate JPEG's")
+			self.jpegUI()
+			self.tabs.setTabEnabled(1,False)
+		#self.tabs.addTab(self.ctfTab,"Remove with JPEG and CTF")
+		#self.tabs.addTab(self.relionTab,"Relion GUI")
+		#self.ctfUI()
+		#self.relionUI()
+		#self.tabs.setTabEnabled(1,False)
+		#self.tabs.setTabEnabled(2,False)
 
 		self.layout.addWidget(self.tabs)
 		self.setLayout(self.layout)
@@ -52,9 +57,8 @@ class tabWidgetSetup(QWidget):
 			self.tiffEntry1 = QHBoxLayout()
 			self.tiffText1 = QLineEdit()
 			self.tiffEntry1.addWidget(self.tiffText1)
-			self.tiffButton1 = QPushButton()
-			self.tiffButton1.setText("Browse")
-			self.tiffButton1.clicked.connect(lambda:self.folderOpen(1))
+			self.tiffButton1 = QPushButton("Browse")
+			self.tiffButton1.clicked.connect(lambda:self.folderOpen1(1))
 			self.tiffEntry1.addWidget(self.tiffButton1)
 			self.motioncorTab.layout.addRow(self.tiffLabel1, self.tiffEntry1)
 
@@ -62,9 +66,8 @@ class tabWidgetSetup(QWidget):
 			self.micEntry1 = QHBoxLayout()
 			self.micText1 = QLineEdit()
 			self.micEntry1.addWidget(self.micText1)
-			self.micButton1 = QPushButton()
-			self.micButton1.setText("Browse")
-			self.micButton1.clicked.connect(lambda:self.folderOpen(2))
+			self.micButton1 = QPushButton("Browse")
+			self.micButton1.clicked.connect(lambda:self.folderOpen1(2))
 			self.micEntry1.addWidget(self.micButton1)
 			self.motioncorTab.layout.addRow(self.micLabel1, self.micEntry1)
 
@@ -72,9 +75,8 @@ class tabWidgetSetup(QWidget):
 		self.jpegEntry1 = QHBoxLayout()
 		self.jpegText1 = QLineEdit()
 		self.jpegEntry1.addWidget(self.jpegText1)
-		self.jpegButton1 = QPushButton()
-		self.jpegButton1.setText("Browse")
-		self.jpegButton1.clicked.connect(lambda:self.folderOpen(3))
+		self.jpegButton1 = QPushButton("Browse")
+		self.jpegButton1.clicked.connect(lambda:self.folderOpen1(3))
 		self.jpegEntry1.addWidget(self.jpegButton1)
 		self.motioncorTab.layout.addRow(self.jpegLabel1, self.jpegEntry1)
 
@@ -85,24 +87,27 @@ class tabWidgetSetup(QWidget):
 		self.motioncorTab.layout.addRow(self.multiLabel1, self.multiSelect1)
 
 		self.columnsLabel1 = QLabel("Number of columns:")
-		self.columnsText1 = QLineEdit()
+		self.columnsText1 = QLineEdit("5")
+		#self.columnsText1.setFixedWidth(30)
+		#self.columnsText1.setAlignment(QtCore.Qt.AlignCenter)
 		self.columnsText1.setDisabled(True)
 		self.motioncorTab.layout.addRow(self.columnsLabel1, self.columnsText1)
 
 		self.scaleLabel1 = QLabel("Micrograph scaling:")
-		self.scaleText1 = QLineEdit()
+		self.scaleText1 = QLineEdit(".4")
+		#self.scaleText1.setFixedWidth(30)
+		#self.scaleText1.setAlignment(QtCore.Qt.AlignCenter)
 		self.scaleText1.setDisabled(True)
 		self.motioncorTab.layout.addRow(self.scaleLabel1, self.scaleText1)
 
-		self.motioncorSubmit = QPushButton()
-		self.motioncorSubmit.setText("Submit")
+		self.motioncorSubmit = QPushButton("Submit")
 		self.motioncorSubmit.clicked.connect(self.motioncorGoNext)
 		self.motioncorTab.layout.addRow(self.motioncorSubmit)
 
 		self.motioncorTab.setLayout(self.motioncorTab.layout)
 
-	def folderOpen(self,x):
-		self.openFolder = QFileDialog.getExistingDirectory(self, "Open Directory")
+	def folderOpen1(self,x):
+		self.openFolder = QFileDialog.getExistingDirectory(self, "Open")
 		if x == 1:
 			self.tiffText1.setText(self.openFolder)
 		elif x == 2:
@@ -164,10 +169,80 @@ class tabWidgetSetup(QWidget):
 		else:
 			spaceWarning = QMessageBox.warning(self, 'Error', "Please remove all spaces from inputs.", QMessageBox.Ok)
 
-	def ctfUI(self):
+	def jpegUI(self):
+		self.jpegTab.layout = QFormLayout(self)
+
+		self.micLabel0 = QLabel("Input micrographs:")
+		self.micEntry0 = QHBoxLayout()
+		self.micText0 = QLineEdit("Micrographs/*.tif")
+		self.micEntry0.addWidget(self.micText0)
+		self.micButton0 = QPushButton("Browse")
+		self.micButton0.clicked.connect(self.fileOpen0)
+		self.micEntry0.addWidget(self.micButton0)
+		self.jpegTab.layout.addRow(self.micLabel0, self.micEntry0)
+
+		self.outputLabel0 = QLabel("Output JPEG directory:")
+		self.outputEntry0 = QHBoxLayout()
+		self.outputText0 = QLineEdit("Micrographs/jpegs")
+		self.outputEntry0.addWidget(self.outputText0)
+		self.outputButton0 = QPushButton("Browse")
+		self.outputButton0.clicked.connect(self.folderOpen0)
+		self.outputEntry0.addWidget(self.outputButton0)
+		self.jpegTab.layout.addRow(self.outputLabel0, self.outputEntry0)
+
+		self.e2proc2dLabel0 = QLabel("e2proc2d.py location")
+		self.e2proc2dEntry0 = QHBoxLayout()
+		self.e2proc2dText0 = QLineEdit("/bin/e2proc2d.py")
+		self.e2proc2dEntry0.addWidget(self.e2proc2dText0)
+		self.e2proc2dButton0 = QPushButton("Browse")
+		self.e2proc2dButton0.clicked.connect(self.e2proc2dOpen0)
+		self.e2proc2dEntry0.addWidget(self.e2proc2dButton0)
+		self.jpegTab.layout.addRow(self.e2proc2dLabel0, self.e2proc2dEntry0)
+
+		self.apixLabel0 = QLabel("Pixel size (A/pix):")
+		self.apixText0 = QLineEdit("1")
+		self.jpegTab.layout.addRow(self.apixLabel0, self.apixText0)
+
+		self.filterLabel0 = QLabel("Low-pass filter (A):")
+		self.filterText0 = QLineEdit("20")
+		self.jpegTab.layout.addRow(self.filterLabel0, self.filterText0)
+
+		self.shrinkLabel0 = QLabel("Shrink image:")
+		self.shrinkText0 = QLineEdit("4")
+		self.jpegTab.layout.addRow(self.shrinkLabel0, self.shrinkText0)
+
+		self.additionalLabel0 = QLabel("Additional arguments:")
+		self.additionalText0 = QLineEdit()
+		self.jpegTab.layout.addRow(self.additionalLabel0, self.additionalText0)
+
+		self.jpegSubmit = QPushButton("Submit")
+		self.jpegSubmit.clicked.connect(self.jpegGoNext)
+		self.jpegTab.layout.addRow(self.jpegSubmit)
+
+		self.jpegTab.setLayout(self.jpegTab.layout)
+
+	def fileOpen0(self):
+		self.openFile = QFileDialog.getOpenFileName(self, "Open", ".", "Micrographs (*.tif *.mrc *.tiff *.mrcs)")
+		if self.openFile[0] != "":
+			self.micText0.setText(self.openFile[0])
+
+	def folderOpen0(self):
+		self.openFolder = QFileDialog.getExistingDirectory(self, "Open")
+		if self.openFolder != "":
+			self.outputText0.setText(self.openFolder)
+
+	def e2proc2dOpen0(self):
+		self.openE2proc2d = QFileDialog.getOpenFileName(self, "Open", ".", "e2proc2d.py (e2proc2d.py)")
+		if self.openE2proc2d[0] != "":
+			self.e2proc2dText0.setText(self.openE2proc2d[0])
+
+	def jpegGoNext(self):
+		pass
+
+	"""def ctfUI(self):
 		self.ctfTab.layout = QFormLayout(self)
 
-		"""self.curateLabel2 = QLabel(self)
+		self.curateLabel2 = QLabel(self)
 		self.curateLabel2.setText("Curate with jpeg or mrc files:")
 
 		self.curateType2 = QHBoxLayout()
@@ -256,10 +331,10 @@ class tabWidgetSetup(QWidget):
 		self.ctfSubmit = QPushButton(self)
 		self.ctfSubmit.setText("Submit")
 		self.ctfSubmit.clicked.connect(self.ctfGoNext)
-		self.ctfTab.layout.addRow(self.ctfSubmit)"""
+		self.ctfTab.layout.addRow(self.ctfSubmit)
 
 		self.ctfTab.setLayout(self.ctfTab.layout)
-		"""self.curateJPEG2.setChecked(True)
+		self.curateJPEG2.setChecked(True)
 		self.moviesText2.setDisabled(True)
 		self.micText2.setDisabled(True)
 		self.ctfText2.setDisabled(True)
@@ -302,10 +377,10 @@ class tabWidgetSetup(QWidget):
 			else:
 				self.ctfText2.setDisabled(True)"""
 
-	def relionUI(self):
+	"""def relionUI(self):
 		self.relionTab.layout = QFormLayout(self)
 
-		"""self.curateLabel3 = QLabel(self)
+		self.curateLabel3 = QLabel(self)
 		self.curateLabel3.setText("Curate with jpeg or mrc files:")
 
 		self.curateType3 = QHBoxLayout()
@@ -394,10 +469,10 @@ class tabWidgetSetup(QWidget):
 		self.relionSubmit = QPushButton(self)
 		self.relionSubmit.setText("Submit")
 		self.relionSubmit.clicked.connect(self.relionGoNext)
-		self.relionTab.layout.addRow(self.relionSubmit)"""
+		self.relionTab.layout.addRow(self.relionSubmit)
 
 		self.relionTab.setLayout(self.relionTab.layout)
-		"""self.curateJPEG3.setChecked(True)
+		self.curateJPEG3.setChecked(True)
 		self.moviesText3.setDisabled(True)
 		self.micText3.setDisabled(True)
 		self.ctfText3.setDisabled(True)
