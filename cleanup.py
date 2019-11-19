@@ -1,13 +1,15 @@
 #!/usr/bin/env python3.6
 
-#Last modified 11/18/19 by Honkit Ng.
+#Last modified 11/19/19 by Honkit Ng.
 
 import os
 import sys
+import subprocess
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QMainWindow, QLineEdit, QLabel, QPushButton, QRadioButton, QTabWidget, QWidget, QFormLayout, QHBoxLayout, QVBoxLayout, QCheckBox, QMessageBox, QFileDialog, QScrollArea, QWidget, QComboBox, QProgressBar
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt, QThread
+import time
 
 class micsLocation(QMainWindow):
 	def __init__(self):
@@ -150,9 +152,9 @@ class tabWidgetSetup(QWidget):
 							if self.multiSelect1.currentText() == "Yes":
 								if badNumbers == 0:
 									self.motioncorSubmit.setEnabled(False)
-									self.progressBar = QProgressBar()
-									self.progressBar.setRange(0,0)
-									self.motioncorTab.layout.addRow(self.progressBar)
+									self.jpegProgress = QProgressBar()
+									self.jpegProgress.setRange(0,0)
+									self.motioncorTab.layout.addRow(self.jpegProgress)
 									self.rmMics = removeMics2(self)
 									self.rmMics.show()
 									window1.hide()
@@ -174,7 +176,7 @@ class tabWidgetSetup(QWidget):
 
 		self.micLabel0 = QLabel("Input micrographs:")
 		self.micEntry0 = QHBoxLayout()
-		self.micText0 = QLineEdit("Micrographs/*.tif")
+		self.micText0 = QLineEdit("Micrographs/*.mrc")
 		self.micEntry0.addWidget(self.micText0)
 		self.micButton0 = QPushButton("Browse")
 		self.micButton0.clicked.connect(self.fileOpen0)
@@ -183,7 +185,7 @@ class tabWidgetSetup(QWidget):
 
 		self.outputLabel0 = QLabel("Output JPEG directory:")
 		self.outputEntry0 = QHBoxLayout()
-		self.outputText0 = QLineEdit("Micrographs/jpegs")
+		self.outputText0 = QLineEdit("Micrographs/jpeg")
 		self.outputEntry0.addWidget(self.outputText0)
 		self.outputButton0 = QPushButton("Browse")
 		self.outputButton0.clicked.connect(self.folderOpen0)
@@ -215,14 +217,23 @@ class tabWidgetSetup(QWidget):
 		self.additionalText0 = QLineEdit()
 		self.jpegTab.layout.addRow(self.additionalLabel0, self.additionalText0)
 
+		self.blankLabel0 = QLabel()
+		self.blankLabel0.setFixedWidth(200)
+		self.jpegEntry0 = QHBoxLayout()
+		self.jpegCmd = QPushButton("Print Command")
+		#self.jpegCmd.setFixedWidth(200)
+		self.jpegCmd.clicked.connect(self.jpegPrintCmd)
+		self.jpegEntry0.addWidget(self.jpegCmd)
 		self.jpegSubmit = QPushButton("Submit")
+		#self.jpegSubmit.setFixedWidth(200)
 		self.jpegSubmit.clicked.connect(self.jpegGoNext)
-		self.jpegTab.layout.addRow(self.jpegSubmit)
+		self.jpegEntry0.addWidget(self.jpegSubmit)
+		self.jpegTab.layout.addRow(self.blankLabel0, self.jpegEntry0)
 
 		self.jpegTab.setLayout(self.jpegTab.layout)
 
 	def fileOpen0(self):
-		self.openFile = QFileDialog.getOpenFileName(self, "Open", ".", "Micrographs (*.tif *.mrc *.tiff *.mrcs)")
+		self.openFile = QFileDialog.getOpenFileName(self, "Open", ".", "Micrographs (*.tif *.mrc *.hdf)")
 		if self.openFile[0] != "":
 			self.micText0.setText(self.openFile[0])
 
@@ -236,8 +247,70 @@ class tabWidgetSetup(QWidget):
 		if self.openE2proc2d[0] != "":
 			self.e2proc2dText0.setText(self.openE2proc2d[0])
 
+	def jpegSetup(self):
+		self.micLoc0 = self.micText0.text()
+		self.outputDir0 = self.outputText0.text()
+		self.e2proc2dLoc0 = self.e2proc2dText0.text()
+		self.apixVal0 = self.apixText0.text()
+		self.filterVal0 = self.filterText0.text()
+		self.shrinkVal0 = self.shrinkText0.text()
+		self.additionalArgs0 = self.additionalText0.text()
+
+		if "/" in self.micLoc0:
+			self.micDir0 = self.micLoc0.rsplit("/",1)[0]
+			if "*" in self.micLoc0:
+				self.micExt0 = self.micLoc0.rsplit("/",1)[1].split("*",1)[1]
+			else:
+				self.micExt0 = self.micLoc0.rsplit("/",1)[1]
+		else:
+			if "*" in self.micLoc0:
+				self.micDir0 = os.path.abspath(self.micLoc0.split("*",1)[0])
+				self.micExt0 = self.micLoc0.split("*",1)[1]
+			else:
+				self.micDir0 = os.path.abspath(".")
+				self.micExt0 = self.micLoc0
+
+	def jpegPrintCmd(self):
+		self.jpegSetup()
+
+		try:
+			for file in os.listdir(self.micDir0):
+				if file.endswith(self.micExt0):
+					newFile = file.split(".",1)[0] + ".jpeg"
+					print(f'{self.e2proc2dLoc0} {os.path.join(self.micDir0, file)} {os.path.join(self.outputDir0, newFile)}'
+						f'--apix={self.apixVal0} --process filter.lowpass.gauss:cutoff_freq={self.filterVal0} --meanshrink={self.shrinkVal0} {self.additionalArgs0}')
+		except FileNotFoundError:
+			noDir = QMessageBox.warning(self, 'Error', "Invalid directory entered.\n\n Please enter a different directory.", QMessageBox.Ok)
+
 	def jpegGoNext(self):
-		pass
+		self.jpegSetup()
+
+		self.micCountFunc = subprocess.Popen(f'ls {self.micLoc0} | wc -l', stdout=subprocess.PIPE, shell=True)
+		self.micCount = int(self.micCountFunc.stdout.read())
+		if self.micCount == 0:
+			inputWarning = QMessageBox.warning(self, 'Error', "No micrographs found in input.", QMessageBox.Ok)
+		else:
+			if os.path.exists(self.outputDir0) == False:
+				outputWarning = QMessageBox.warning(self, 'Error', "Output directory missing.", QMessageBox.Ok)
+			else:				
+				self.convertProgress = QProgressBar()
+				self.convertProgress.setRange(0,self.micCount)
+				self.jpegTab.layout.addRow(self.convertProgress)
+
+				i = 0
+
+				for file in os.listdir(self.micDir0):
+					if file.endswith(self.micExt0):
+						newFile = os.path.join(self.outputDir0, file.split(".",1)[0] + ".jpeg")
+						if os.path.exists(newFile) == False:
+							print(f'{self.e2proc2dLoc0} {os.path.join(self.micDir0, file)} {os.path.join(newFile)}'
+								f'--apix={self.apixVal0} --process filter.lowpass.gauss:cutoff_freq={self.filterVal0} --meanshrink={self.shrinkVal0} {self.additionalArgs0}')
+							i+=1
+							self.convertProgress.setValue(i)
+							QtWidgets.QApplication.processEvents()
+							time.sleep(2)
+				convertDone = QMessageBox.information(self, 'Complete', "All micrographs have been converted!", QMessageBox.Ok)
+				self.convertProgress.hide()
 
 	"""def ctfUI(self):
 		self.ctfTab.layout = QFormLayout(self)
