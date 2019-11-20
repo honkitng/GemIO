@@ -16,7 +16,7 @@ Note:
 ## Usage
 ### Linux
 This program is intended to run on Linux with full functionality. This program uses JPEG files to view and delete micrographs. Log files are generated after each run and can be imported (from Linux or Windows sessions) to continue previous sessions.
-* Use e2proc2d.py (i.e. e2proc2d.py *.mrc jpeg/@.jpeg --apix={pixel size} --process filter.lowpass.gauss:cutoff_freq=20 --meanshrink=4) to low pass filter and generate the JPEG files from the MRC files if they do not already exist.
+* Use e2proc2d.py to generate the JPEG files from the MRC files if they do not already exist (can be done through the GUI).
 
 Notes:
 - Only input TIF directory if you wish to remove TIF files
