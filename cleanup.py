@@ -9,7 +9,8 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QMainWindow, QLineEdit, QLabel, QPushButton, QRadioButton, QTabWidget, QWidget, QFormLayout, QHBoxLayout, QVBoxLayout, QCheckBox, QMessageBox, QFileDialog, QScrollArea, QWidget, QComboBox, QProgressBar
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt, QThread
-import time
+
+
 
 class micsLocation(QMainWindow):
 	def __init__(self):
@@ -40,7 +41,7 @@ class tabWidgetSetup(QWidget):
 		if sys.platform == 'linux':
 			self.tabs.addTab(self.jpegTab,"Generate JPEG's")
 			self.jpegUI()
-			self.tabs.setTabEnabled(1,False)
+			#self.tabs.setTabEnabled(1,False)
 		#self.tabs.addTab(self.ctfTab,"Remove with JPEG and CTF")
 		#self.tabs.addTab(self.relionTab,"Relion GUI")
 		#self.ctfUI()
@@ -89,14 +90,14 @@ class tabWidgetSetup(QWidget):
 		self.motioncorTab.layout.addRow(self.multiLabel1, self.multiSelect1)
 
 		self.columnsLabel1 = QLabel("Number of columns:")
-		self.columnsText1 = QLineEdit("5")
+		self.columnsText1 = QLineEdit("4")
 		#self.columnsText1.setFixedWidth(30)
 		#self.columnsText1.setAlignment(QtCore.Qt.AlignCenter)
 		self.columnsText1.setDisabled(True)
 		self.motioncorTab.layout.addRow(self.columnsLabel1, self.columnsText1)
 
 		self.scaleLabel1 = QLabel("Micrograph scaling:")
-		self.scaleText1 = QLineEdit(".4")
+		self.scaleText1 = QLineEdit(".5")
 		#self.scaleText1.setFixedWidth(30)
 		#self.scaleText1.setAlignment(QtCore.Qt.AlignCenter)
 		self.scaleText1.setDisabled(True)
@@ -233,7 +234,7 @@ class tabWidgetSetup(QWidget):
 		self.jpegTab.setLayout(self.jpegTab.layout)
 
 	def fileOpen0(self):
-		self.openFile = QFileDialog.getOpenFileName(self, "Open", ".", "Micrographs (*.tif *.mrc *.hdf)")
+		self.openFile = QFileDialog.getOpenFileName(self, "Open", ".", "Micrographs (*.tif *.mrc *.hdf);;All files (*.*)")
 		if self.openFile[0] != "":
 			self.micText0.setText(self.openFile[0])
 
@@ -243,7 +244,7 @@ class tabWidgetSetup(QWidget):
 			self.outputText0.setText(self.openFolder)
 
 	def e2proc2dOpen0(self):
-		self.openE2proc2d = QFileDialog.getOpenFileName(self, "Open", ".", "e2proc2d.py (e2proc2d.py)")
+		self.openE2proc2d = QFileDialog.getOpenFileName(self, "Open", ".", "e2proc2d.py (e2proc2d.py);;All files (*.*)")
 		if self.openE2proc2d[0] != "":
 			self.e2proc2dText0.setText(self.openE2proc2d[0])
 
@@ -277,7 +278,7 @@ class tabWidgetSetup(QWidget):
 			for file in os.listdir(self.micDir0):
 				if file.endswith(self.micExt0):
 					newFile = file.split(".",1)[0] + ".jpeg"
-					print(f'{self.e2proc2dLoc0} {os.path.join(self.micDir0, file)} {os.path.join(self.outputDir0, newFile)}'
+					print(f'{self.e2proc2dLoc0} {os.path.join(self.micDir0, file)} {os.path.join(self.outputDir0, newFile)} '
 						f'--apix={self.apixVal0} --process filter.lowpass.gauss:cutoff_freq={self.filterVal0} --meanshrink={self.shrinkVal0} {self.additionalArgs0}')
 		except FileNotFoundError:
 			noDir = QMessageBox.warning(self, 'Error', "Invalid directory entered.\n\n Please enter a different directory.", QMessageBox.Ok)
@@ -301,14 +302,17 @@ class tabWidgetSetup(QWidget):
 
 				for file in os.listdir(self.micDir0):
 					if file.endswith(self.micExt0):
+						QtWidgets.QApplication.processEvents()
+
 						newFile = os.path.join(self.outputDir0, file.split(".",1)[0] + ".jpeg")
 						if os.path.exists(newFile) == False:
-							print(f'{self.e2proc2dLoc0} {os.path.join(self.micDir0, file)} {os.path.join(newFile)}'
+							os.system(f'{self.e2proc2dLoc0} {os.path.join(self.micDir0, file)} {os.path.join(newFile)} '
 								f'--apix={self.apixVal0} --process filter.lowpass.gauss:cutoff_freq={self.filterVal0} --meanshrink={self.shrinkVal0} {self.additionalArgs0}')
 							i+=1
 							self.convertProgress.setValue(i)
-							QtWidgets.QApplication.processEvents()
-							time.sleep(2)
+						else:
+							i+=1
+							self.convertProgress.setValue(i)
 				convertDone = QMessageBox.information(self, 'Complete', "All micrographs have been converted!", QMessageBox.Ok)
 				self.convertProgress.hide()
 
@@ -749,7 +753,7 @@ class removeMics1(QMainWindow):
 		self.resetGUI()
 
 	def importLog(self):
-		self.importFile = QFileDialog.getOpenFileName(self, "Import log", "." , "Log files (*.log)")
+		self.importFile = QFileDialog.getOpenFileName(self, "Import log", "." , "Log files (*.log);;All files (*.*)")
 		if self.importFile[0] != "":
 			if sys.platform == 'win32':
 				self.importFile = self.importFile[0].replace("/","\\")
@@ -772,7 +776,7 @@ class removeMics1(QMainWindow):
 				self.resetGUI()
 
 	def openMic(self):
-		self.mic2open_full = QFileDialog.getOpenFileName(self, "Open", "%s" % (tabWidgetSetup.jpegDir1) , "Image files (*.jpeg)")
+		self.mic2open_full = QFileDialog.getOpenFileName(self, "Open", "%s" % (tabWidgetSetup.jpegDir1) , "Image files (*.jpeg);;All files (*.*)")
 		try:
 			if sys.platform == 'win32':
 				self.mic2open_trunc = self.mic2open_full[0].rsplit("/",1)[-1]
@@ -1022,7 +1026,7 @@ class removeMics2(QMainWindow):
 			self.badjpeg = f2.readlines()
 
 	def importLog(self):
-		self.importFile = QFileDialog.getOpenFileName(self, "Import log", "." , "Log files (*.log)")
+		self.importFile = QFileDialog.getOpenFileName(self, "Import log", "." , "Log files (*.log);;All files (*.*)")
 		if self.importFile[0] != "":
 			if sys.platform == 'win32':
 				self.importFile = self.importFile[0].replace("/","\\")
