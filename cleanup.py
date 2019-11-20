@@ -67,7 +67,7 @@ class tabWidgetSetup(QWidget):
 
 			self.micLabel1 = QLabel("Corrected micrographs directory:")
 			self.micEntry1 = QHBoxLayout()
-			self.micText1 = QLineEdit()
+			self.micText1 = QLineEdit("Micrographs")
 			self.micEntry1.addWidget(self.micText1)
 			self.micButton1 = QPushButton("Browse")
 			self.micButton1.clicked.connect(lambda:self.folderOpen1(2))
@@ -76,7 +76,7 @@ class tabWidgetSetup(QWidget):
 
 		self.jpegLabel1 = QLabel("JPEG directory:")
 		self.jpegEntry1 = QHBoxLayout()
-		self.jpegText1 = QLineEdit()
+		self.jpegText1 = QLineEdit("jpgs")
 		self.jpegEntry1.addWidget(self.jpegText1)
 		self.jpegButton1 = QPushButton("Browse")
 		self.jpegButton1.clicked.connect(lambda:self.folderOpen1(3))
