@@ -1,5 +1,6 @@
-# GemIO (**G**raphically **e**liminate **m**icrographs **I**nhibiting **O**perations)
+# GemIO
 
+**G**raphically **e**liminate **m**icrographs **I**nhibiting **O**perations
 *--""Finding gems in your data because sometimes your micrographs are a diamond in the rough."*
 
 This program can be used to remove movies, micrographs (with associated relion generated files) and jpeg files following motion correction.
