@@ -9,7 +9,7 @@
 This program can be used to remove movies, micrographs (with associated relion generated files) and jpeg files following motion correction.
 
 ## Requirements
-### cleanup.py file (Recommended)
+### GemIO.py file (Recommended)
 * python3.6
 * PyQt5 (5.9.2) module - install using "pip3.6 install PyQt5" after installing python3.6
 
