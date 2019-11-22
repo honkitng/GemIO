@@ -1,3 +1,6 @@
+11/20/19
+-added option to convert motion corrected micrographs to jpeg files with e2proc2d.py
+
 11/8/19
 -added progress bar to indicate when images are being loaded into multi-view grid after initial set up
 
