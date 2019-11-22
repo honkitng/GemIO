@@ -1,3 +1,6 @@
+11/22/19
+-name changed from cleanup.py to GemIO.py
+
 11/20/19
 -added option to convert motion corrected micrographs to jpeg files with e2proc2d.py
 
