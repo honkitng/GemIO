@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.6
 
-#Last modified 11/19/19 by Honkit Ng.
+#Last modified 11/22/19 by Honkit Ng.
 
 import os
 import sys
@@ -17,7 +17,7 @@ class micsLocation(QMainWindow):
 		super(micsLocation, self).__init__()
 
 		self.setGeometry(200, 200, 570, 100)
-		self.setWindowTitle("Settings")
+		self.setWindowTitle("GemIO")
 
 		self.tabWidget = tabWidgetSetup(self)
 		self.setCentralWidget(self.tabWidget)
@@ -967,7 +967,7 @@ class removeMics2(QMainWindow):
 		self.screenRes = app.desktop().screenGeometry()
 		self.widRes, self.lenRes = self.screenRes.width(), self.screenRes.height()
 		self.setGeometry(200, 200, self.widRes - 400, self.lenRes - 200)
-		self.setWindowTitle("Selection")
+		self.setWindowTitle("GemIO")
 
 		self.scrollVWidget = QWidget()
 		self.scrollVBox = QVBoxLayout()

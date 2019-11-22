@@ -1,4 +1,6 @@
-# RELION cleanup
+# GemIO
+
+**G**raphically **e**liminate **m**icrographs **I**nhibiting **O**perations
 
 This program can be used to remove movies, micrographs (with associated relion generated files) and jpeg files following motion correction.
 
