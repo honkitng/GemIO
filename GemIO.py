@@ -55,8 +55,11 @@ class tabWidgetSetup(QWidget):
 	def motioncorUI(self):
 		self.motioncorTab.layout = QFormLayout()
 
+		self.headerLabel1 = QLabel("* = required")
+		self.motioncorTab.layout.addRow(self.headerLabel1)
+
 		if sys.platform == 'linux':
-			self.starLabel1 = QLabel("Micrograph star file:")
+			self.starLabel1 = QLabel("Micrograph star file ")
 			self.starEntry1 = QHBoxLayout()
 			self.starText1 = QLineEdit()
 			self.starEntry1.addWidget(self.starText1)
@@ -65,7 +68,7 @@ class tabWidgetSetup(QWidget):
 			self.starEntry1.addWidget(self.starButton1)
 			self.motioncorTab.layout.addRow(self.starLabel1, self.starEntry1)
 
-			self.tiffLabel1 = QLabel("TIF directory:")
+			self.tiffLabel1 = QLabel("TIF directory ")
 			self.tiffEntry1 = QHBoxLayout()
 			self.tiffText1 = QLineEdit()
 			self.tiffEntry1.addWidget(self.tiffText1)
@@ -74,7 +77,7 @@ class tabWidgetSetup(QWidget):
 			self.tiffEntry1.addWidget(self.tiffButton1)
 			self.motioncorTab.layout.addRow(self.tiffLabel1, self.tiffEntry1)
 
-			self.micLabel1 = QLabel("Corrected micrographs directory:")
+			self.micLabel1 = QLabel("Corrected micrographs directory * ")
 			self.micEntry1 = QHBoxLayout()
 			self.micText1 = QLineEdit("Micrographs")
 			self.micEntry1.addWidget(self.micText1)
@@ -83,7 +86,7 @@ class tabWidgetSetup(QWidget):
 			self.micEntry1.addWidget(self.micButton1)
 			self.motioncorTab.layout.addRow(self.micLabel1, self.micEntry1)
 
-		self.jpegLabel1 = QLabel("JPEG directory:")
+		self.jpegLabel1 = QLabel("JPEG directory * ")
 		self.jpegEntry1 = QHBoxLayout()
 		self.jpegText1 = QLineEdit("jpgs")
 		self.jpegEntry1.addWidget(self.jpegText1)
@@ -92,20 +95,20 @@ class tabWidgetSetup(QWidget):
 		self.jpegEntry1.addWidget(self.jpegButton1)
 		self.motioncorTab.layout.addRow(self.jpegLabel1, self.jpegEntry1)
 
-		self.multiLabel1 = QLabel("Display all in one screen?")
+		self.multiLabel1 = QLabel("Single screen display * ")
 		self.multiSelect1 = QComboBox()
 		self.multiSelect1.addItems(["No","Yes"])
 		self.multiSelect1.activated.connect(self.columnsSelection1)
 		self.motioncorTab.layout.addRow(self.multiLabel1, self.multiSelect1)
 
-		self.columnsLabel1 = QLabel("Number of columns:")
+		self.columnsLabel1 = QLabel("Number of columns * ")
 		self.columnsText1 = QLineEdit("4")
 		#self.columnsText1.setFixedWidth(30)
 		#self.columnsText1.setAlignment(QtCore.Qt.AlignCenter)
 		self.columnsText1.setDisabled(True)
 		self.motioncorTab.layout.addRow(self.columnsLabel1, self.columnsText1)
 
-		self.scaleLabel1 = QLabel("Micrograph scaling:")
+		self.scaleLabel1 = QLabel("Micrograph scaling * ")
 		self.scaleText1 = QLineEdit(".5")
 		#self.scaleText1.setFixedWidth(30)
 		#self.scaleText1.setAlignment(QtCore.Qt.AlignCenter)
@@ -191,7 +194,10 @@ class tabWidgetSetup(QWidget):
 	def jpegUI(self):
 		self.jpegTab.layout = QFormLayout(self)
 
-		self.micLabel0 = QLabel("Input micrographs:")
+		self.headerLabel0 = QLabel("* = required")
+		self.jpegTab.layout.addRow(self.headerLabel0)
+
+		self.micLabel0 = QLabel("Input micrographs * ")
 		self.micEntry0 = QHBoxLayout()
 		self.micText0 = QLineEdit("Micrographs/*.mrc")
 		self.micEntry0.addWidget(self.micText0)
@@ -200,7 +206,7 @@ class tabWidgetSetup(QWidget):
 		self.micEntry0.addWidget(self.micButton0)
 		self.jpegTab.layout.addRow(self.micLabel0, self.micEntry0)
 
-		self.outputLabel0 = QLabel("Output JPEG directory:")
+		self.outputLabel0 = QLabel("Output JPEG directory * ")
 		self.outputEntry0 = QHBoxLayout()
 		self.outputText0 = QLineEdit("Micrographs/jpeg")
 		self.outputEntry0.addWidget(self.outputText0)
@@ -209,7 +215,7 @@ class tabWidgetSetup(QWidget):
 		self.outputEntry0.addWidget(self.outputButton0)
 		self.jpegTab.layout.addRow(self.outputLabel0, self.outputEntry0)
 
-		self.e2proc2dLabel0 = QLabel("e2proc2d.py location")
+		self.e2proc2dLabel0 = QLabel("e2proc2d.py location * ")
 		self.e2proc2dEntry0 = QHBoxLayout()
 		self.e2proc2dText0 = QLineEdit("/bin/e2proc2d.py")
 		self.e2proc2dEntry0.addWidget(self.e2proc2dText0)
@@ -218,19 +224,19 @@ class tabWidgetSetup(QWidget):
 		self.e2proc2dEntry0.addWidget(self.e2proc2dButton0)
 		self.jpegTab.layout.addRow(self.e2proc2dLabel0, self.e2proc2dEntry0)
 
-		self.apixLabel0 = QLabel("Pixel size (A/pix):")
+		self.apixLabel0 = QLabel("Pixel size (A/pix) * ")
 		self.apixText0 = QLineEdit("1")
 		self.jpegTab.layout.addRow(self.apixLabel0, self.apixText0)
 
-		self.filterLabel0 = QLabel("Low-pass filter (A):")
+		self.filterLabel0 = QLabel("Low-pass filter (A) * ")
 		self.filterText0 = QLineEdit("20")
 		self.jpegTab.layout.addRow(self.filterLabel0, self.filterText0)
 
-		self.shrinkLabel0 = QLabel("Shrink image:")
+		self.shrinkLabel0 = QLabel("Shrink image * ")
 		self.shrinkText0 = QLineEdit("4")
 		self.jpegTab.layout.addRow(self.shrinkLabel0, self.shrinkText0)
 
-		self.additionalLabel0 = QLabel("Additional arguments:")
+		self.additionalLabel0 = QLabel("Additional arguments ")
 		self.additionalText0 = QLineEdit()
 		self.jpegTab.layout.addRow(self.additionalLabel0, self.additionalText0)
 
@@ -815,6 +821,10 @@ class removeMics1(QMainWindow):
 			missMic = QMessageBox.warning(self, 'Error', "Micrograph not originally in input directory.\n Please select a different micrograph.", QMessageBox.Ok)
 
 	def exportStar(self):
+		fileNum = 0
+		while os.path.isfile("corrected_micrographs_clean_%s.star" % (fileNum)) == True:
+			fileNum += 1
+
 		if tabWidgetSetup.starFile1 != "" and " " not in tabWidgetSetup.starFile1:
 			with open(tabWidgetSetup.starFile1) as f7:
 				starlines = f7.readlines()
@@ -830,8 +840,9 @@ class removeMics1(QMainWindow):
 					else:
 						missing = False
 				except IndexError:
-					with open("corrected_micrographs_clean.star", "a+") as f8:
+					with open("corrected_micrographs_clean_%s.star" % (fileNum), "a+") as f8:
 						f8.write(starline)
+		exportMessage = QMessageBox.information(self, 'Note', "Note: Only selected micrographs from this session were removed from the micrograph star file.", QMessageBox.Close, QMessageBox.Close)
 
 	def lastNext(self):
 		deleteMessage = QMessageBox.question(self, 'Trash', "Trash all selected micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
@@ -1096,6 +1107,10 @@ class removeMics2(QMainWindow):
 			self.labelList[importedJPEG.strip("\n")].setStyleSheet("QLabel {border: 5px solid red;}")
 
 	def exportStar(self):
+		fileNum = 0
+		while os.path.isfile("corrected_micrographs_clean_%s.star" % (fileNum)) == True:
+			fileNum += 1
+
 		if tabWidgetSetup.starFile1 != "" and " " not in tabWidgetSetup.starFile1:
 			with open(tabWidgetSetup.starFile1) as f7:
 				starlines = f7.readlines()
@@ -1111,8 +1126,9 @@ class removeMics2(QMainWindow):
 					else:
 						missing = False
 				except IndexError:
-					with open("corrected_micrographs_clean.star", "a+") as f8:
+					with open("corrected_micrographs_clean_%s.star" % (fileNum), "a+") as f8:
 						f8.write(starline)
+		exportMessage = QMessageBox.information(self, 'Note', "Note: Only selected micrographs from this session were removed from the micrograph star file.", QMessageBox.Close, QMessageBox.Close)
 
 	def lastNext(self):
 		deleteMessage = QMessageBox.question(self, 'Trash', "Trash all selected micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
