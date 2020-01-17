@@ -21,11 +21,13 @@ Note:
 
 ## Usage
 ### Linux
-This program is intended to run on Linux with full functionality. This program uses JPEG files to view and delete micrographs. Log files are generated after each run and can be imported (from Linux or Windows sessions) to continue previous sessions.
+This program is intended to run on Linux with full functionality. This program uses JPEG files to view and delete micrographs. Log files are generated after each run and can be imported (from Linux or Windows sessions) to continue previous sessions. Star files can also be generated and imported into RELION which do not contain any removed micrographs.
 * Use e2proc2d.py to generate the JPEG files from the MRC files if they do not already exist (can be done through the GUI).
 
 Notes:
 - Only input TIF directory if you wish to remove TIF files
+- Only input micrograph star file if you wish to remove selected micrographs from the star file
+- Only use star files that contain **only** the inputted micrographs
 - This program assumes the use of .tif, .mrc, and .jpeg file extensions for movies, corrected micrographs and jpeg files, respectively.
 
 ### Windows and Mac
