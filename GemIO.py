@@ -821,28 +821,28 @@ class removeMics1(QMainWindow):
 			missMic = QMessageBox.warning(self, 'Error', "Micrograph not originally in input directory.\n Please select a different micrograph.", QMessageBox.Ok)
 
 	def exportStar(self):
-		fileNum = 0
-		while os.path.isfile("corrected_micrographs_clean_%s.star" % (fileNum)) == True:
-			fileNum += 1
-
 		if tabWidgetSetup.starFile1 != "" and " " not in tabWidgetSetup.starFile1:
+			fileNum = 0
+			while os.path.isfile("corrected_micrographs_clean_%s.star" % (fileNum)) == True:
+				fileNum += 1
+
 			with open(tabWidgetSetup.starFile1) as f7:
 				starlines = f7.readlines()
-		starlines_new = []
-		with open("badjpeg_selected.log") as f2:
-			lines = f2.readlines()
-			for starline in starlines:
-				n = 0
-				missing = True
-				try:
-					while lines[n].replace("jpeg\n", "mrc").replace(tabWidgetSetup.jpegDir1, "") not in starline and missing:
-						n += 1
-					else:
-						missing = False
-				except IndexError:
-					with open("corrected_micrographs_clean_%s.star" % (fileNum), "a+") as f8:
-						f8.write(starline)
-		exportMessage = QMessageBox.information(self, 'Note', "Note: Only selected micrographs from this session were removed from the micrograph star file.", QMessageBox.Close, QMessageBox.Close)
+			starlines_new = []
+			with open("badjpeg_selected.log") as f2:
+				lines = f2.readlines()
+				for starline in starlines:
+					n = 0
+					missing = True
+					try:
+						while lines[n].replace("jpeg\n", "mrc").replace(tabWidgetSetup.jpegDir1, "") not in starline and missing:
+							n += 1
+						else:
+							missing = False
+					except IndexError:
+						with open("corrected_micrographs_clean_%s.star" % (fileNum), "a+") as f8:
+							f8.write(starline)
+			exportMessage = QMessageBox.information(self, 'Note', "Note: Only selected micrographs from this session were removed from the micrograph star file.", QMessageBox.Ok, QMessageBox.Ok)
 
 	def lastNext(self):
 		deleteMessage = QMessageBox.question(self, 'Trash', "Trash all selected micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
@@ -953,6 +953,7 @@ class removeMics1(QMainWindow):
 				os.system("rm -rf %s/jpegTrash" % (tabWidgetSetup.jpegDir1))
 				os.system("rm -rf %s/mrcTrash" % (tabWidgetSetup.micDir1))
 			if self.endMessage != QMessageBox.Cancel:
+				self.exportStar()
 				self.saveLog()
 				event.accept()
 			if self.endMessage == QMessageBox.Cancel:
@@ -1107,28 +1108,28 @@ class removeMics2(QMainWindow):
 			self.labelList[importedJPEG.strip("\n")].setStyleSheet("QLabel {border: 5px solid red;}")
 
 	def exportStar(self):
-		fileNum = 0
-		while os.path.isfile("corrected_micrographs_clean_%s.star" % (fileNum)) == True:
-			fileNum += 1
-
 		if tabWidgetSetup.starFile1 != "" and " " not in tabWidgetSetup.starFile1:
+			fileNum = 0
+			while os.path.isfile("corrected_micrographs_clean_%s.star" % (fileNum)) == True:
+				fileNum += 1
+
 			with open(tabWidgetSetup.starFile1) as f7:
 				starlines = f7.readlines()
-		starlines_new = []
-		with open("badjpeg_selected.log") as f2:
-			lines = f2.readlines()
-			for starline in starlines:
-				n = 0
-				missing = True
-				try:
-					while lines[n].replace("jpeg\n", "mrc").replace(tabWidgetSetup.jpegDir1, "") not in starline and missing:
-						n += 1
-					else:
-						missing = False
-				except IndexError:
-					with open("corrected_micrographs_clean_%s.star" % (fileNum), "a+") as f8:
-						f8.write(starline)
-		exportMessage = QMessageBox.information(self, 'Note', "Note: Only selected micrographs from this session were removed from the micrograph star file.", QMessageBox.Close, QMessageBox.Close)
+			starlines_new = []
+			with open("badjpeg_selected.log") as f2:
+				lines = f2.readlines()
+				for starline in starlines:
+					n = 0
+					missing = True
+					try:
+						while lines[n].replace("jpeg\n", "mrc").replace(tabWidgetSetup.jpegDir1, "") not in starline and missing:
+							n += 1
+						else:
+							missing = False
+					except IndexError:
+						with open("corrected_micrographs_clean_%s.star" % (fileNum), "a+") as f8:
+							f8.write(starline)
+			exportMessage = QMessageBox.information(self, 'Note', "Note: Only selected micrographs from this session were removed from the micrograph star file.", QMessageBox.Ok, QMessageBox.Ok)
 
 	def lastNext(self):
 		deleteMessage = QMessageBox.question(self, 'Trash', "Trash all selected micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
@@ -1229,6 +1230,7 @@ class removeMics2(QMainWindow):
 				os.system("rm -rf %s/jpegTrash" % (tabWidgetSetup.jpegDir1))
 				os.system("rm -rf %s/mrcTrash" % (tabWidgetSetup.micDir1))
 			if self.endMessage != QMessageBox.Cancel:
+				self.exportStar()
 				self.saveLog()
 				event.accept()
 			if self.endMessage == QMessageBox.Cancel:
@@ -1241,3 +1243,4 @@ if __name__ == "__main__":
 	window1 = micsLocation()	
 	window1.show()
 	sys.exit(app.exec_())
+
