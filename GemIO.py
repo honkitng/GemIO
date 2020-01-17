@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.6
 
-#Last modified 11/22/19 by Honkit Ng.
+#Last modified 01/17/20 by Honkit Ng.
 
 import os
 import sys
@@ -56,6 +56,15 @@ class tabWidgetSetup(QWidget):
 		self.motioncorTab.layout = QFormLayout()
 
 		if sys.platform == 'linux':
+			self.starLabel1 = QLabel("Micrograph star file:")
+			self.starEntry1 = QHBoxLayout()
+			self.starText1 = QLineEdit()
+			self.starEntry1.addWidget(self.starText1)
+			self.starButton1 = QPushButton("Browse")
+			self.starButton1.clicked.connect(self.fileOpen1)
+			self.starEntry1.addWidget(self.starButton1)
+			self.motioncorTab.layout.addRow(self.starLabel1, self.starEntry1)
+
 			self.tiffLabel1 = QLabel("TIF directory:")
 			self.tiffEntry1 = QHBoxLayout()
 			self.tiffText1 = QLineEdit()
@@ -109,6 +118,11 @@ class tabWidgetSetup(QWidget):
 
 		self.motioncorTab.setLayout(self.motioncorTab.layout)
 
+	def fileOpen1(self):
+		self.openFile = QFileDialog.getOpenFileName(self, "Open", ".", "STAR file (*.star)")
+		if self.openFile[0] != "":
+			self.starText1.setText(self.openFile[0])
+
 	def folderOpen1(self,x):
 		self.openFolder = QFileDialog.getExistingDirectory(self, "Open")
 		if x == 1:
@@ -128,9 +142,11 @@ class tabWidgetSetup(QWidget):
 
 	def motioncorGoNext(self):
 		if sys.platform != 'linux':
+			tabWidgetSetup.starFile1 = "None_Entered"
 			tabWidgetSetup.tiffDir1 = "None_Entered"
 			tabWidgetSetup.micDir1 = "None_Entered"
 		else:
+			tabWidgetSetup.starFile1 = self.starText1.text()
 			tabWidgetSetup.tiffDir1 = self.tiffText1.text()
 			tabWidgetSetup.micDir1 = self.micText1.text()
 		tabWidgetSetup.jpegDir1 = self.jpegText1.text()
@@ -628,6 +644,10 @@ class removeMics1(QMainWindow):
 		self.importMenu.triggered.connect(self.importLog)
 		self.openMenu = self.fileMenu.addAction("&Open micrograph")
 		self.openMenu.triggered.connect(self.openMic)
+		self.starMenu = self.fileMenu.addAction("&Export star file")
+		self.StarMenu.triggered.connect(self.exportStar)
+		if tabWidgetSetup.starFile1 != "" and " " not in tabWidgetSetup.starFile1:
+			self.StarMenu.setDisabled(True)
 		
 		self.editMenu = self.menu.addMenu('&Edit')
 		self.undoSelMenu = self.editMenu.addAction("&Undo all selected")
@@ -794,6 +814,26 @@ class removeMics1(QMainWindow):
 		except ValueError:
 			missMic = QMessageBox.warning(self, 'Error', "Micrograph not originally in input directory.\n Please select a different micrograph.", QMessageBox.Ok)
 
+	def exportStar(self):
+		if tabWidgetSetup.starFile1 != "" and " " not in tabWidgetSetup.starFile1:
+			with open(tabWidgetSetup.starFile1) as f7:
+				starlines = f7.readlines()
+		starlines_new = []
+		with open("badjpeg_selected.log") as f2:
+			lines = f2.readlines()
+			for starline in starlines:
+				n = 0
+				missing = True
+				try:
+					while lines[n] not in starline and missing:
+						n += 1
+					else:
+						missing = False
+				except IndexError:
+					starlines_new.append(starline)
+		with open("micrographs_clean.star", "w+") as f8:
+			f8.write(starlines_new)
+
 	def lastNext(self):
 		deleteMessage = QMessageBox.question(self, 'Trash', "Trash all selected micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
 		if deleteMessage == QMessageBox.Yes:
@@ -940,6 +980,10 @@ class removeMics2(QMainWindow):
 		self.fileMenu = self.menu.addMenu('&File')
 		self.importMenu = self.fileMenu.addAction("&Import log file")
 		self.importMenu.triggered.connect(self.importLog)
+		self.starMenu = self.fileMenu.addAction("&Export star file")
+		self.StarMenu.triggered.connect(self.exportStar)
+		if tabWidgetSetup.starFile1 != "" and " " not in tabWidgetSetup.starFile1:
+			self.StarMenu.setDisabled(True)
 		
 		self.editMenu = self.menu.addMenu('&Edit')
 		self.undoSelMenu = self.editMenu.addAction("&Undo all selected")
@@ -1051,6 +1095,26 @@ class removeMics2(QMainWindow):
 			self.labelList[jpegFile].setStyleSheet("QLabel {border: 0px solid red;}")
 		for importedJPEG in self.badjpeg:
 			self.labelList[importedJPEG.strip("\n")].setStyleSheet("QLabel {border: 5px solid red;}")
+
+	def exportStar(self):
+		if tabWidgetSetup.starFile1 != "" and " " not in tabWidgetSetup.starFile1:
+			with open(tabWidgetSetup.starFile1) as f7:
+				starlines = f7.readlines()
+		starlines_new = []
+		with open("badjpeg_selected.log") as f2:
+			lines = f2.readlines()
+			for starline in starlines:
+				n = 0
+				missing = True
+				try:
+					while lines[n] not in starline and missing:
+						n += 1
+					else:
+						missing = False
+				except IndexError:
+					starlines_new.append(starline)
+		with open("micrographs_clean.star", "w+") as f8:
+			f8.write(starlines_new)
 
 	def lastNext(self):
 		deleteMessage = QMessageBox.question(self, 'Trash', "Trash all selected micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
