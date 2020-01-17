@@ -645,9 +645,9 @@ class removeMics1(QMainWindow):
 		self.openMenu = self.fileMenu.addAction("&Open micrograph")
 		self.openMenu.triggered.connect(self.openMic)
 		self.starMenu = self.fileMenu.addAction("&Export star file")
-		self.StarMenu.triggered.connect(self.exportStar)
-		if tabWidgetSetup.starFile1 != "" and " " not in tabWidgetSetup.starFile1:
-			self.StarMenu.setDisabled(True)
+		self.starMenu.triggered.connect(self.exportStar)
+		if tabWidgetSetup.starFile1 == "" or " " in tabWidgetSetup.starFile1:
+			self.starMenu.setDisabled(True)
 		
 		self.editMenu = self.menu.addMenu('&Edit')
 		self.undoSelMenu = self.editMenu.addAction("&Undo all selected")
@@ -825,14 +825,13 @@ class removeMics1(QMainWindow):
 				n = 0
 				missing = True
 				try:
-					while lines[n] not in starline and missing:
+					while lines[n].replace("jpeg\n", "mrc").replace(tabWidgetSetup.jpegDir1, "") not in starline and missing:
 						n += 1
 					else:
 						missing = False
 				except IndexError:
-					starlines_new.append(starline)
-		with open("micrographs_clean.star", "w+") as f8:
-			f8.write(starlines_new)
+					with open("corrected_micrographs_clean.star", "a+") as f8:
+						f8.write(starline)
 
 	def lastNext(self):
 		deleteMessage = QMessageBox.question(self, 'Trash', "Trash all selected micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
@@ -981,9 +980,9 @@ class removeMics2(QMainWindow):
 		self.importMenu = self.fileMenu.addAction("&Import log file")
 		self.importMenu.triggered.connect(self.importLog)
 		self.starMenu = self.fileMenu.addAction("&Export star file")
-		self.StarMenu.triggered.connect(self.exportStar)
-		if tabWidgetSetup.starFile1 != "" and " " not in tabWidgetSetup.starFile1:
-			self.StarMenu.setDisabled(True)
+		self.starMenu.triggered.connect(self.exportStar)
+		if tabWidgetSetup.starFile1 == "" or " " in tabWidgetSetup.starFile1:
+			self.starMenu.setDisabled(True)
 		
 		self.editMenu = self.menu.addMenu('&Edit')
 		self.undoSelMenu = self.editMenu.addAction("&Undo all selected")
@@ -1107,14 +1106,13 @@ class removeMics2(QMainWindow):
 				n = 0
 				missing = True
 				try:
-					while lines[n] not in starline and missing:
+					while lines[n].replace("jpeg\n", "mrc").replace(tabWidgetSetup.jpegDir1, "") not in starline and missing:
 						n += 1
 					else:
 						missing = False
 				except IndexError:
-					starlines_new.append(starline)
-		with open("micrographs_clean.star", "w+") as f8:
-			f8.write(starlines_new)
+					with open("corrected_micrographs_clean.star", "a+") as f8:
+						f8.write(starline)
 
 	def lastNext(self):
 		deleteMessage = QMessageBox.question(self, 'Trash', "Trash all selected micrographs?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
