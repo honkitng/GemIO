@@ -14,9 +14,6 @@ This program can be used to remove movies, micrographs (with associated relion g
 * PIL module - install using "pip3.8 install pillow"
 * flask module - install using "pip3.8 install flask"
 
-### Precompiled binaries (only available for Windows and Linux)
-* None
-
 Note:
 - Only use if cannot install python3.8 or the required modules
 
