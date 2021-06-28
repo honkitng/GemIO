@@ -1,7 +1,3 @@
-1/17/20
--added option to export a "cleaned" micrograph star file from one generated in relion
--improved clarity of required and optional inputs
-
 11/22/19
 -name changed from cleanup.py to GemIO.py
 
