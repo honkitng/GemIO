@@ -6,16 +6,13 @@
 
 ## Overview
 
-This program can be used to remove movies, micrographs (with associated relion generated files) and jpeg files following motion correction.
+GemIO can be used to remove movies, micrographs (with associated relion generated files) and jpeg files following motion correction.
 
 ## Requirements
 ### GemIO.py file (Recommended)
 * python3.8
 * PIL module - install using "pip3.8 install pillow"
 * flask module - install using "pip3.8 install flask"
-
-Note:
-- Only use if cannot install python3.8 or the required modules
 
 ## Usage
 ### Linux
