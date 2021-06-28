@@ -10,26 +10,21 @@ This program can be used to remove movies, micrographs (with associated relion g
 
 ## Requirements
 ### GemIO.py file (Recommended)
-* python3.6
-* PyQt5 (5.9.2) module - install using "pip3.6 install PyQt5" after installing python3.6
+* python3.8
+* PIL module - install using "pip3.8 install pillow"
+* flask module - install using "pip3.8 install flask"
 
 ### Precompiled binaries (only available for Windows and Linux)
 * None
 
 Note:
-- Only use if cannot install python3.6 or the PyQt5 module. Otherwise, the python file is more reliable and up to date.
+- Only use if cannot install python3.8 or the required modules
 
 ## Usage
 ### Linux
-This program is intended to run on Linux with full functionality. This program uses JPEG files to view and delete micrographs. Log files are generated after each run and can be imported (from Linux or Windows sessions) to continue previous sessions. Star files can also be generated and imported into RELION which do not contain any removed micrographs.
-* Use e2proc2d.py to generate the JPEG files from the MRC files if they do not already exist (can be done through the GUI).
+GemIO uses JPEG files to select micrographs and move those selected micrograph to dedicated trash directories. Star files can also be edited and imported into RELION which do not contain any removed micrographs.
+* Use e2proc2d.py to generate the JPEG files from the motion corrected MRC files if they do not already exist.
 
 Notes:
-- Only input TIF directory if you wish to remove TIF files
-- Only input micrograph star file if you wish to remove selected micrographs from the star file
-- Only use star files that contain **only** the inputted micrographs
-- This program assumes the use of .tif, .mrc, and .jpeg file extensions for movies, corrected micrographs and jpeg files, respectively.
-
-### Windows and Mac
-This program can be run on Windows and Mac to generate the log files ONLY. This file can be imported into the program when it is run on a Linux machine with all the data.
-* To generate the log file on Windows and Mac, select all micrographs you wish to remove and close the program when you are done.
+- TIF directory is required as an input, but the tiffs are not required to be in the directory
+- Only input star files if you wish to remove selected micrographs from the star files
