@@ -1,0 +1,15 @@
+body {
+    background-color: #fdf6c5;
+}
+
+#main-body {
+    margin-bottom: 50px;
+}
+
+.image-button {
+    padding: 0px;
+}
+
+.image-button:focus {
+    box-shadow: none;
+}
