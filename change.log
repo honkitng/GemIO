@@ -1,8 +1,15 @@
+6/29/21
+-improved directory, file and error handling
+-removed testing code and cleaned up terminal output
+-bug fixes
+    -fixed various bug that incorrectly moved files to their trash directories
+    -fixed various bug that incorrectly edited the star files
+
 6/28/21
--recoded from desktop app to local web app
+-restructured application as a local web app
 
 1/17/20
--added option to export a "cleaned" micrograph star file from one generated in relion
+-added option to export a "cleaned" micrograph star file from one generated in RELION
 -improved clarity of required and optional inputs
 
 11/22/19

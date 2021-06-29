@@ -23,9 +23,9 @@ class SetupWindow:
 
         self.jpeg_folder = tk.StringVar()
         self.tiff_folder = tk.StringVar()
-        self.import_folder = tk.StringVar()
-        self.motioncorr_folder = tk.StringVar()
-        self.ctf_folder = tk.StringVar()
+        self.import_file = tk.StringVar()
+        self.motioncorr_file = tk.StringVar()
+        self.ctf_file = tk.StringVar()
         self.save_folder = tk.StringVar()
 
         OPTIONAL_ROW = 0
@@ -45,15 +45,15 @@ class SetupWindow:
         self.tiff_entry = tk.Entry(self.root, width=20, textvariable=self.tiff_folder)
         self.tiff_button = tk.Button(self.root, text='Browse', command=lambda: self.browse_folder('tiff'))
         self.import_label = tk.Label(self.root, text='* Import star file: ')
-        self.import_entry = tk.Entry(self.root, width=20, textvariable=self.import_folder)
+        self.import_entry = tk.Entry(self.root, width=20, textvariable=self.import_file)
         self.import_button = tk.Button(self.root, text='Browse', command=lambda: self.browse_file('import'))
         self.motioncorr_label = tk.Label(self.root, text='* MotionCorr star file: ')
-        self.motioncorr_entry = tk.Entry(self.root, width=20, textvariable=self.motioncorr_folder)
+        self.motioncorr_entry = tk.Entry(self.root, width=20, textvariable=self.motioncorr_file)
         self.motioncorr_button = tk.Button(self.root, text='Browse', command=lambda: self.browse_file('motioncorr'))
         self.ctf_label = tk.Label(self.root, text='* CtfFind star file: ')
-        self.ctf_entry = tk.Entry(self.root, width=20, textvariable=self.ctf_folder)
+        self.ctf_entry = tk.Entry(self.root, width=20, textvariable=self.ctf_file)
         self.ctf_button = tk.Button(self.root, text='Browse', command=lambda: self.browse_file('ctf'))
-        self.save_label = tk.Label(self.root, text='* Directory to save new star files: ')
+        self.save_label = tk.Label(self.root, text='* Directory to save new files: ')
         self.save_entry = tk.Entry(self.root, width=20, textvariable=self.save_folder)
         self.save_button = tk.Button(self.root, text='Browse', command=lambda: self.browse_folder('save'))
         self.submit_button = tk.Button(self.root, text='Submit', command=self.go_next)
@@ -95,25 +95,25 @@ class SetupWindow:
         file_name = tk.filedialog.askopenfilename()
         if file_name:
             if event == 'import':
-                self.import_folder.set(file_name)
+                self.import_file.set(file_name)
             elif event == 'motioncorr':
-                self.motioncorr_folder.set(file_name)
+                self.motioncorr_file.set(file_name)
             elif event == 'ctf':
-                self.ctf_folder.set(file_name)
+                self.ctf_file.set(file_name)
 
     def go_next(self):
         jpeg_exists = os.path.exists(self.jpeg_folder.get())
         tiff_exists = os.path.exists(self.tiff_folder.get())
-        if self.import_folder.get():
-            import_exists = os.path.exists(self.import_folder.get())
+        if self.import_file.get():
+            import_exists = os.path.exists(self.import_file.get())
         else:
             import_exists = True
-        if self.motioncorr_folder.get():
-            motioncorr_exists = os.path.exists(self.motioncorr_folder.get())
+        if self.motioncorr_file.get():
+            motioncorr_exists = os.path.exists(self.motioncorr_file.get())
         else:
             motioncorr_exists = True
-        if self.ctf_folder.get():
-            ctf_exists = os.path.exists(self.ctf_folder.get())
+        if self.ctf_file.get():
+            ctf_exists = os.path.exists(self.ctf_file.get())
         else:
             ctf_exists = True
         if self.save_folder.get():
@@ -158,12 +158,12 @@ class SetupWindow:
         self.done = True
         self.jpeg_loc = self.jpeg_folder.get()
         self.tiff_loc = self.tiff_folder.get()
-        if self.import_folder.get():
-            self.import_loc = self.import_folder.get()
-        if self.motioncorr_folder.get():
-            self.motioncorr_loc = self.motioncorr_folder.get()
-        if self.ctf_folder.get():
-            self.ctf_loc = self.ctf_folder.get()
+        if self.import_file.get():
+            self.import_loc = self.import_file.get()
+        if self.motioncorr_file.get():
+            self.motioncorr_loc = self.motioncorr_file.get()
+        if self.ctf_file.get():
+            self.ctf_loc = self.ctf_file.get()
         if self.save_folder.get():
             self.save_loc = self.save_folder.get()
         self.root.destroy()
@@ -297,13 +297,13 @@ if __name__ == '__main__':
                 if save_loc:
                     save_selected = os.path.join(save_loc, 'selected.txt')
                 else:
-                    save_selected = 'selected.txt'
+                    save_selected = os.path.join(os.getcwd(), 'selected.txt')
                 with open(save_selected, 'w+') as f:
                     for jpeg in sorted(selected_jpegs):
                         f.write(f'{jpeg}\n')
 
                 data['selected'] = len(selected_jpegs)
-                data['location'] = os.path.join(os.getcwd(), 'selected.txt')
+                data['location'] = save_selected
 
                 return jsonify(data)
             else:
