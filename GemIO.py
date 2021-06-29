@@ -187,7 +187,6 @@ if __name__ == '__main__':
         @app.route('/', methods=['GET', 'POST'])
         def gallery_page():
             if request.method == 'POST':
-                time.sleep(3)
                 data = {}
                 import_new = []
                 motioncorr_new = []
@@ -206,7 +205,8 @@ if __name__ == '__main__':
                     with open(import_loc) as f:
                         import_star = f.readlines()
                     for line in import_star:
-                        if line.split(' ')[0].split('.tif')[0].split('/')[-1] not in selected_jpegs:
+                        img_root = line.split(' ')[0].split('.tif')[0].split('/')[-1]
+                        if f'{img_root}.jpeg' not in selected_jpegs:
                             import_new.append(line)
                     if save_loc:
                         save_import = save_loc
@@ -224,7 +224,8 @@ if __name__ == '__main__':
                     with open(motioncorr_loc) as f:
                         motioncorr_star = f.readlines()
                     for line in motioncorr_star:
-                        if line.split(' ')[0].split('.mrc')[0].split('_noDW')[0].split('/')[-1] not in selected_jpegs:
+                        img_root = line.split(' ')[0].split('.mrc')[0].split('_noDW')[0].split('/')[-1]
+                        if f'{img_root}.jpeg' not in selected_jpegs:
                             motioncorr_new.append(line)
                     if save_loc:
                         save_motioncorr = save_loc
@@ -241,13 +242,14 @@ if __name__ == '__main__':
                     with open(ctf_loc) as f:
                         ctf_star = f.readlines()
                     for line in ctf_star:
-                        if line.split(' ')[0].split('.mrc')[0].split('_noDW')[0].split('/')[-1] not in selected_jpegs:
+                        img_root = line.split(' ')[0].split('.mrc')[0].split('_noDW')[0].split('/')[-1]
+                        if f'{img_root}.jpeg' not in selected_jpegs:
                             ctf_new.append(line)
                     if save_loc:
                         save_ctf = save_loc
                     else:
                         save_ctf = ctf_dir
-                    with open(os.path.join(save_ctf, 'micrographs_ctf.star'), 'w+') as f:
+                    with open(os.path.join(save_ctf, 'micrographs_ctf_new.star'), 'w+') as f:
                         for line in ctf_new:
                             f.write(line)
 
@@ -256,7 +258,7 @@ if __name__ == '__main__':
                     if os.path.exists(jpeg_full):
                         shutil.move(jpeg_full, jpeg_trash)
                     tiff_full = os.path.join(tiff_loc, jpeg.replace('.png', '.tif'))
-                    if not os.path.exists(tiff_full):
+                    if os.path.exists(tiff_full):
                         shutil.move(tiff_full, tiff_trash)
                     if motioncorr_loc:
                         motioncorr_extensions = ['0-Patch-FitCoeff.log', '0-Patch-Frame.log', '0-Patch-Full.log',
@@ -265,17 +267,21 @@ if __name__ == '__main__':
                         for extension in motioncorr_extensions:
                             motioncorr_full = os.path.join(motioncorr_dir, tiff_dirname,
                                                            jpeg.replace('.png', extension))
-                            if not os.path.exists(motioncorr_full):
+                            if os.path.exists(motioncorr_full):
                                 shutil.move(motioncorr_full, motioncorr_trash)
                     if ctf_loc:
                         ctf_extensions = ['_avrot.txt', '.ctf', '_ctffind4.com', '_ctffind4.log', '.mrc', '.txt']
                         for extension in ctf_extensions:
-                            ctf_full = os.path.join(ctf_dir, tiff_dirname, jpeg.replace('.png', extension))
-                            if not os.path.exists(ctf_full):
+                            ctf_full = os.path.join(ctf_dir, tiff_dirname, jpeg.replace('.png', f'_noDW{extension}'))
+                            if os.path.exists(ctf_full):
                                 shutil.move(ctf_full, ctf_trash)
+                            else:
+                                ctf_full = os.path.join(ctf_dir, tiff_dirname, jpeg.replace('.png', extension))
+                                if os.path.exists(ctf_full):
+                                    shutil.move(ctf_full, ctf_trash)
 
                 with open(os.path.join(save_loc, 'selected_new.txt'), 'w') as f:
-                    for jpeg in selected_jpegs:
+                    for jpeg in sorted(selected_jpegs):
                         f.write(f'{jpeg}\n')
 
                 data['selected'] = len(selected_jpegs)
@@ -283,9 +289,7 @@ if __name__ == '__main__':
 
                 return jsonify(data)
             else:
-                jpegs = {}
-                for root, dirs, files in os.walk(jpeg_loc):
-                    jpegs = sorted({file for file in files if file.endswith('.png')})
+                jpegs = sorted({file for file in os.listdir(jpeg_loc) if file.endswith('.png')})
                 image = Image.open(os.path.join(jpeg_loc, jpegs[0]))
                 full_width, full_height = image.size
                 width = 400
