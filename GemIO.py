@@ -1,6 +1,6 @@
 import os
 import ast
-import time
+import sys
 import shutil
 import tkinter as tk
 import tkinter.filedialog
@@ -183,6 +183,8 @@ if __name__ == '__main__':
         save_loc = setup.save_loc
 
         app = Flask(__name__)
+        cli = sys.modules['flask.cli']
+        cli.show_server_banner = lambda *x: None
 
         @app.route('/', methods=['GET', 'POST'])
         def gallery_page():
@@ -302,10 +304,14 @@ if __name__ == '__main__':
                 return jsonify(data)
             else:
                 jpegs = sorted({file for file in os.listdir(jpeg_loc) if file.endswith('.jpeg')})
-                image = Image.open(os.path.join(jpeg_loc, jpegs[0]))
-                full_width, full_height = image.size
-                width = 400
-                height = full_height // (full_width//width)
+                if jpegs:
+                    image = Image.open(os.path.join(jpeg_loc, jpegs[0]))
+                    full_width, full_height = image.size
+                    width = 400
+                    height = full_height // (full_width//width)
+                else:
+                    width = 400
+                    height = 400
                 return render_template('main.html', directory=jpeg_loc, jpegs=jpegs, width=width, height=height)
 
         @app.route('/jpeg/<path:filename>')
