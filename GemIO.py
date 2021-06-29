@@ -294,7 +294,11 @@ if __name__ == '__main__':
                                 if os.path.exists(ctf_full):
                                     shutil.move(ctf_full, ctf_trash)
 
-                with open(os.path.join(save_loc, 'selected.txt'), 'w') as f:
+                if save_loc:
+                    save_selected = os.path.join(save_loc, 'selected.txt')
+                else:
+                    save_selected = 'selected.txt'
+                with open(save_selected, 'w+') as f:
                     for jpeg in sorted(selected_jpegs):
                         f.write(f'{jpeg}\n')
 
