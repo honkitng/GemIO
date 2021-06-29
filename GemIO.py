@@ -212,7 +212,11 @@ if __name__ == '__main__':
                         save_import = save_loc
                     else:
                         save_import = import_dir
-                    with open(os.path.join(save_import, 'movies_new.star'), 'w+') as f:
+                        old_import = import_loc.replace('.star', '_old.star')
+                        if os.path.exists(old_import):
+                            os.remove(old_import)
+                        os.rename(import_loc, old_import)
+                    with open(os.path.join(save_import, 'movies.star'), 'w+') as f:
                         for line in import_new:
                             f.write(line)
 
@@ -231,7 +235,11 @@ if __name__ == '__main__':
                         save_motioncorr = save_loc
                     else:
                         save_motioncorr = motioncorr_dir
-                    with open(os.path.join(save_motioncorr, 'corrected_micrographs_new.star'), 'w+') as f:
+                        old_motioncorr = motioncorr_loc.replace('.star', '_old.star')
+                        if os.path.exists(old_motioncorr):
+                            os.remove(old_motioncorr)
+                        os.rename(motioncorr_loc, old_motioncorr)
+                    with open(os.path.join(save_motioncorr, 'corrected_micrographs.star'), 'w+') as f:
                         for line in motioncorr_new:
                             f.write(line)
                 if ctf_loc:
@@ -249,7 +257,11 @@ if __name__ == '__main__':
                         save_ctf = save_loc
                     else:
                         save_ctf = ctf_dir
-                    with open(os.path.join(save_ctf, 'micrographs_ctf_new.star'), 'w+') as f:
+                        old_ctf = ctf_loc.replace('.star', '_old.star')
+                        if os.path.exists(old_ctf):
+                            os.remove(old_ctf)
+                        os.rename(ctf_loc, old_ctf)
+                    with open(os.path.join(save_ctf, 'micrographs_ctf.star'), 'w+') as f:
                         for line in ctf_new:
                             f.write(line)
 
@@ -257,7 +269,7 @@ if __name__ == '__main__':
                     jpeg_full = os.path.join(jpeg_loc, jpeg)
                     if os.path.exists(jpeg_full):
                         shutil.move(jpeg_full, jpeg_trash)
-                    tiff_full = os.path.join(tiff_loc, jpeg.replace('.png', '.tif'))
+                    tiff_full = os.path.join(tiff_loc, jpeg.replace('.jpeg', '.tif'))
                     if os.path.exists(tiff_full):
                         shutil.move(tiff_full, tiff_trash)
                     if motioncorr_loc:
@@ -266,30 +278,30 @@ if __name__ == '__main__':
                                                  '_shifts.eps', '.star']
                         for extension in motioncorr_extensions:
                             motioncorr_full = os.path.join(motioncorr_dir, tiff_dirname,
-                                                           jpeg.replace('.png', extension))
+                                                           jpeg.replace('.jpeg', extension))
                             if os.path.exists(motioncorr_full):
                                 shutil.move(motioncorr_full, motioncorr_trash)
                     if ctf_loc:
                         ctf_extensions = ['_avrot.txt', '.ctf', '_ctffind4.com', '_ctffind4.log', '.mrc', '.txt']
                         for extension in ctf_extensions:
-                            ctf_full = os.path.join(ctf_dir, tiff_dirname, jpeg.replace('.png', f'_noDW{extension}'))
+                            ctf_full = os.path.join(ctf_dir, tiff_dirname, jpeg.replace('.jpeg', f'_noDW{extension}'))
                             if os.path.exists(ctf_full):
                                 shutil.move(ctf_full, ctf_trash)
                             else:
-                                ctf_full = os.path.join(ctf_dir, tiff_dirname, jpeg.replace('.png', extension))
+                                ctf_full = os.path.join(ctf_dir, tiff_dirname, jpeg.replace('.jpeg', extension))
                                 if os.path.exists(ctf_full):
                                     shutil.move(ctf_full, ctf_trash)
 
-                with open(os.path.join(save_loc, 'selected_new.txt'), 'w') as f:
+                with open(os.path.join(save_loc, 'selected.txt'), 'w') as f:
                     for jpeg in sorted(selected_jpegs):
                         f.write(f'{jpeg}\n')
 
                 data['selected'] = len(selected_jpegs)
-                data['location'] = os.path.join(os.getcwd(), 'selected_new.txt')
+                data['location'] = os.path.join(os.getcwd(), 'selected.txt')
 
                 return jsonify(data)
             else:
-                jpegs = sorted({file for file in os.listdir(jpeg_loc) if file.endswith('.png')})
+                jpegs = sorted({file for file in os.listdir(jpeg_loc) if file.endswith('.jpeg')})
                 image = Image.open(os.path.join(jpeg_loc, jpegs[0]))
                 full_width, full_height = image.size
                 width = 400
