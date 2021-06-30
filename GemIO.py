@@ -173,14 +173,18 @@ class SetupWindow:
 
 
 if __name__ == '__main__':
-    setup = SetupWindow()
-    if setup.done:
-        jpeg_loc = setup.jpeg_loc
+    #setup = SetupWindow()
+    #if setup.done:
+    if True:
+        """jpeg_loc = setup.jpeg_loc
         tiff_loc = setup.tiff_loc
         import_loc = setup.import_loc
         motioncorr_loc = setup.motioncorr_loc
         ctf_loc = setup.ctf_loc
-        save_loc = setup.save_loc
+        save_loc = setup.save_loc"""
+
+        jpeg_loc = 'C:\\Users\\honki\\PycharmProjects\\Circle_Picker\\app\\data\\screenshots'
+        save_loc = 'C:\\Users\\honki\\Documents'
 
         app = Flask(__name__)
         cli = sys.modules['flask.cli']
@@ -195,7 +199,7 @@ if __name__ == '__main__':
                 ctf_new = []
 
                 selected_jpegs = set(ast.literal_eval(list(request.form.to_dict().keys())[0]))
-                jpeg_trash = os.path.join(jpeg_loc, 'Trash')
+                """jpeg_trash = os.path.join(jpeg_loc, 'Trash')
                 if not os.path.exists(jpeg_trash):
                     os.mkdir(jpeg_trash)
                 tiff_trash = os.path.join(tiff_loc, 'Trash')
@@ -292,7 +296,7 @@ if __name__ == '__main__':
                             else:
                                 ctf_full = os.path.join(ctf_dir, tiff_dirname, jpeg.replace('.jpeg', extension))
                                 if os.path.exists(ctf_full):
-                                    shutil.move(ctf_full, ctf_trash)
+                                    shutil.move(ctf_full, ctf_trash)"""
 
                 if save_loc:
                     save_selected = os.path.join(save_loc, 'selected.txt')
@@ -307,7 +311,7 @@ if __name__ == '__main__':
 
                 return jsonify(data)
             else:
-                jpegs = sorted({file for file in os.listdir(jpeg_loc) if file.endswith('.jpeg')})
+                jpegs = sorted({file for file in os.listdir(jpeg_loc) if file.endswith('.png')})
                 if jpegs:
                     image = Image.open(os.path.join(jpeg_loc, jpegs[0]))
                     full_width, full_height = image.size
