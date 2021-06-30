@@ -195,6 +195,7 @@ function onWindowScrollTest() {
     for (i = 0; i < showing.length; i++) {
         if (!new_img.includes(showing[i])) {
             $('.image-button')[showing[i]].children[0].remove()
+            console.log($('.image-button')[showing[i]])
         };
     };
 

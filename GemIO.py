@@ -183,9 +183,6 @@ if __name__ == '__main__':
         ctf_loc = setup.ctf_loc
         save_loc = setup.save_loc"""
 
-        jpeg_loc = 'C:\\Users\\honki\\PycharmProjects\\Circle_Picker\\app\\data\\screenshots'
-        save_loc = 'C:\\Users\\honki\\Documents'
-
         app = Flask(__name__)
         cli = sys.modules['flask.cli']
         cli.show_server_banner = lambda *x: None
