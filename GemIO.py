@@ -1,6 +1,6 @@
 import os
-import ast
 import sys
+import json
 import shutil
 import tkinter as tk
 import tkinter.filedialog
@@ -173,15 +173,14 @@ class SetupWindow:
 
 
 if __name__ == '__main__':
-    #setup = SetupWindow()
-    #if setup.done:
-    if True:
-        """jpeg_loc = setup.jpeg_loc
+    setup = SetupWindow()
+    if setup.done:
+        jpeg_loc = setup.jpeg_loc
         tiff_loc = setup.tiff_loc
         import_loc = setup.import_loc
         motioncorr_loc = setup.motioncorr_loc
         ctf_loc = setup.ctf_loc
-        save_loc = setup.save_loc"""
+        save_loc = setup.save_loc
 
         app = Flask(__name__)
         cli = sys.modules['flask.cli']
@@ -194,9 +193,10 @@ if __name__ == '__main__':
                 import_new = []
                 motioncorr_new = []
                 ctf_new = []
+                selected_jpegs = 0
+                jpeg_dict = json.loads(request.get_data())
 
-                selected_jpegs = set(ast.literal_eval(list(request.form.to_dict().keys())[0]))
-                """jpeg_trash = os.path.join(jpeg_loc, 'Trash')
+                jpeg_trash = os.path.join(jpeg_loc, 'Trash')
                 if not os.path.exists(jpeg_trash):
                     os.mkdir(jpeg_trash)
                 tiff_trash = os.path.join(tiff_loc, 'Trash')
@@ -209,7 +209,7 @@ if __name__ == '__main__':
                         import_star = f.readlines()
                     for line in import_star:
                         img_root = line.split(' ')[0].split('.tif')[0].split('/')[-1]
-                        if f'{img_root}.jpeg' not in selected_jpegs:
+                        if jpeg_dict[f'{img_root}.jpeg'] == 0:
                             import_new.append(line)
                     if save_loc:
                         save_import = save_loc
@@ -232,7 +232,7 @@ if __name__ == '__main__':
                         motioncorr_star = f.readlines()
                     for line in motioncorr_star:
                         img_root = line.split(' ')[0].split('.mrc')[0].split('_noDW')[0].split('/')[-1]
-                        if f'{img_root}.jpeg' not in selected_jpegs:
+                        if jpeg_dict[f'{img_root}.jpeg'] == 0:
                             motioncorr_new.append(line)
                     if save_loc:
                         save_motioncorr = save_loc
@@ -254,7 +254,7 @@ if __name__ == '__main__':
                         ctf_star = f.readlines()
                     for line in ctf_star:
                         img_root = line.split(' ')[0].split('.mrc')[0].split('_noDW')[0].split('/')[-1]
-                        if f'{img_root}.jpeg' not in selected_jpegs:
+                        if jpeg_dict[f'{img_root}.jpeg'] == 0:
                             ctf_new.append(line)
                     if save_loc:
                         save_ctf = save_loc
@@ -268,42 +268,45 @@ if __name__ == '__main__':
                         for line in ctf_new:
                             f.write(line)
 
-                for jpeg in selected_jpegs:
-                    jpeg_full = os.path.join(jpeg_loc, jpeg)
-                    if os.path.exists(jpeg_full):
-                        shutil.move(jpeg_full, jpeg_trash)
-                    tiff_full = os.path.join(tiff_loc, jpeg.replace('.jpeg', '.tif'))
-                    if os.path.exists(tiff_full):
-                        shutil.move(tiff_full, tiff_trash)
-                    if motioncorr_loc:
-                        motioncorr_extensions = ['0-Patch-FitCoeff.log', '0-Patch-Frame.log', '0-Patch-Full.log',
-                                                 '0-Patch-Patch.log', '.com', '.err', '.mrc', '_noDW.mrc', '.out',
-                                                 '_shifts.eps', '.star']
-                        for extension in motioncorr_extensions:
-                            motioncorr_full = os.path.join(motioncorr_dir, tiff_dirname,
-                                                           jpeg.replace('.jpeg', extension))
-                            if os.path.exists(motioncorr_full):
-                                shutil.move(motioncorr_full, motioncorr_trash)
-                    if ctf_loc:
-                        ctf_extensions = ['_avrot.txt', '.ctf', '_ctffind4.com', '_ctffind4.log', '.mrc', '.txt']
-                        for extension in ctf_extensions:
-                            ctf_full = os.path.join(ctf_dir, tiff_dirname, jpeg.replace('.jpeg', f'_noDW{extension}'))
-                            if os.path.exists(ctf_full):
-                                shutil.move(ctf_full, ctf_trash)
-                            else:
-                                ctf_full = os.path.join(ctf_dir, tiff_dirname, jpeg.replace('.jpeg', extension))
-                                if os.path.exists(ctf_full):
-                                    shutil.move(ctf_full, ctf_trash)"""
-
                 if save_loc:
                     save_selected = os.path.join(save_loc, 'selected.txt')
                 else:
                     save_selected = os.path.join(os.getcwd(), 'selected.txt')
                 with open(save_selected, 'w+') as f:
-                    for jpeg in sorted(selected_jpegs):
-                        f.write(f'{jpeg}\n')
+                    for jpeg in jpeg_dict.keys():
+                        if jpeg_dict[jpeg] == 1:
+                            selected_jpegs += 1
+                            f.write(f'{jpeg}\n')
 
-                data['selected'] = len(selected_jpegs)
+                            jpeg_full = os.path.join(jpeg_loc, jpeg)
+                            if os.path.exists(jpeg_full):
+                                shutil.move(jpeg_full, jpeg_trash)
+                            tiff_full = os.path.join(tiff_loc, jpeg.replace('.jpeg', '.tif'))
+                            if os.path.exists(tiff_full):
+                                shutil.move(tiff_full, tiff_trash)
+                            if motioncorr_loc:
+                                motioncorr_extensions = ['0-Patch-FitCoeff.log', '0-Patch-Frame.log', 
+                                                         '0-Patch-Full.log', '0-Patch-Patch.log', '.com', '.err', 
+                                                         '.mrc', '_noDW.mrc', '.out', '_shifts.eps', '.star']
+                                for extension in motioncorr_extensions:
+                                    motioncorr_full = os.path.join(motioncorr_dir, tiff_dirname,
+                                                                   jpeg.replace('.jpeg', extension))
+                                    if os.path.exists(motioncorr_full):
+                                        shutil.move(motioncorr_full, motioncorr_trash)
+                            if ctf_loc:
+                                ctf_extensions = ['_avrot.txt', '.ctf', '_ctffind4.com', '_ctffind4.log', '.mrc', 
+                                                  '.txt']
+                                for extension in ctf_extensions:
+                                    ctf_full = os.path.join(ctf_dir, tiff_dirname, 
+                                                            jpeg.replace('.jpeg', f'_noDW{extension}'))
+                                    if os.path.exists(ctf_full):
+                                        shutil.move(ctf_full, ctf_trash)
+                                    else:
+                                        ctf_full = os.path.join(ctf_dir, tiff_dirname, jpeg.replace('.jpeg', extension))
+                                        if os.path.exists(ctf_full):
+                                            shutil.move(ctf_full, ctf_trash)
+
+                data['selected'] = selected_jpegs
                 data['location'] = save_selected
 
                 return jsonify(data)

@@ -2,8 +2,8 @@ body {
     background-color: #fdf6c5;
 }
 
-#main-body {
-    margin-bottom: 50px;
+.main-container {
+    padding: 0px;
 }
 
 .image-button {

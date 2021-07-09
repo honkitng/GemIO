@@ -1,3 +1,6 @@
+7/9/21
+-major changes to optimize for extremely large datasets
+
 6/29/21
 -improved directory, file and error handling
 -removed testing code and cleaned up terminal output
