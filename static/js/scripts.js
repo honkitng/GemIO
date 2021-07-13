@@ -45,24 +45,9 @@ function increaseSize() {
         micrograph = document.getElementsByName("micrograph");
         default_height = (default_width + 50)/default_width * (default_height);
         default_width += 50;
-        micrograph[0].style.width = default_width.toString().concat('px');
-        micrograph[0].style.height = default_height.toString().concat('px');
 
-        // the better way to find the true dimensions of the button
-        $('.image-button')[0].style.width = 'auto'
-        $('.image-button')[0].style.height = 'auto'
-        var width = $('.image-button')[0].offsetWidth;
-        var height = $('.image-button')[0].offsetHeight;
+        refreshPage();
 
-        $('.image-button').each(function(index) {
-            this.style.width = width.toString().concat('px');
-            this.style.height = height.toString().concat('px');
-        });
-
-        for (i = 1; i < micrograph.length; i++) {
-            micrograph[i].style.width = default_width.toString().concat('px');
-            micrograph[i].style.height = default_height.toString().concat('px');
-        }
     }
 }
 
@@ -71,60 +56,44 @@ function decreaseSize() {
         micrograph = document.getElementsByName("micrograph");
         default_height = (default_width - 50)/default_width * (default_height);
         default_width -= 50;
-        micrograph[0].style.width = default_width.toString().concat('px');
-        micrograph[0].style.height = default_height.toString().concat('px');
 
-        // a less elegant way of finding the dimensions of the button but the better way will not work for some reason
-        var width = $('.image-button')[0].offsetWidth;
-        var height = $('.image-button')[0].offsetHeight;
-        height = (width - 50)/width * (height);
-        width -= 50;
-
-        $('.image-button').each(function(index) {
-            this.style.width = width.toString().concat('px');
-            this.style.height = height.toString().concat('px');
-        });
-
-        for (i = 1; i < micrograph.length; i++) {
-            micrograph[i].style.width = default_width.toString().concat('px');
-            micrograph[i].style.height = default_height.toString().concat('px');
-        }
-
-        onWindowScroll();
+        refreshPage();
     }
 }
 
-function getViewport() {
-    var viewport_width;
+function getViewportHeight() {
     var viewport_height;
 
+    var navbar_height = $('.navbar')[0].offsetHeight
+
     if (typeof window.innerWidth != 'undefined') {
-        viewport_width = window.innerWidth,
         viewport_height = window.innerHeight
     } else if (typeof document.documentElement != 'undefined' && typeof document.documentElement.clientWidth != 'undefined' && document.documentElement.clientWidth != 0) {
-        viewport_width = document.documentElement.clientWidth,
         viewport_height = document.documentElement.clientHeight
     } else {
-        viewport_width = document.getElementsByTagName('body')[0].clientWidth,
         viewport_height = document.getElementsByTagName('body')[0].clientHeight
     }
-    return [viewport_width, viewport_height];
+
+    return viewport_height - navbar_height;
 }
+
+var img_margin = '3px';
+var img_border = '5px';
 
 function addButtonImg(img_position) {
     var add_button = document.createElement('button');
     add_button.classList.add('btn', 'image-button');
     add_button.role = 'button';
     add_button.id = all_jpegs[img_position];
-    add_button.style.margin = '3px';
+    add_button.style.margin = img_margin;
     add_button.onclick = function(event) {
         select(all_jpegs[img_position]);
     }
 
     if (jpeg_dict[all_jpegs[img_position]] == 1) {
-        add_button.style.border = '5px solid red';
+        add_button.style.border = img_border.concat(' solid red');
     } else {
-        add_button.style.border = '5px solid #fdf6c5';
+        add_button.style.border = img_border.concat(' solid #fdf6c5');
     }
 
     var add_img = document.createElement('img');
@@ -136,6 +105,17 @@ function addButtonImg(img_position) {
     add_button.appendChild(add_img);
 
     return add_button;
+}
+
+function refreshPage() {
+    var widget_count = $('.image-button').length
+    for (i=0; i < widget_count; i++) {
+        $('.image-button')[0].remove();
+    }
+
+    first_index = 0;
+    $(window).scrollTop(0);
+    onStart();
 }
 
 var total_margin;
@@ -152,15 +132,18 @@ function onStart() {
     var new_button = addButtonImg(0);
     $('#main-container')[0].appendChild(new_button);
 
-    var border_width = parseInt($('.image-button')[0].style.borderWidth.replace('px', ''));
-    var margin_width = parseInt($('.image-button')[0].style.margin.replace('px', ''));
+    var margin_size = parseInt(img_margin.replace('px', ''));
 
-    img_width = $('.image-button')[0].offsetWidth + border_width + margin_width;
-    img_height = $('.image-button')[0].offsetHeight + border_width + margin_width;
+    img_width = $('.image-button')[0].offsetWidth + 2 * margin_size;
+    img_height = $('.image-button')[0].offsetHeight + 2 * margin_size;
 
-    var [viewport_width, viewport_height] = getViewport();
-    columns_shown = Math.floor(viewport_width/img_width)
-    rows_shown = Math.floor(viewport_height/img_height)
+    $('#main-container')[0].style.marginBottom = '10000px';
+
+    var viewport_height = getViewportHeight();
+    var viewport_width = $('#main-container').width()
+
+    columns_shown = Math.floor(viewport_width/img_width);
+    rows_shown = Math.ceil(viewport_height/img_height);
     images_shown =  columns_shown * rows_shown + 2 * columns_shown;
 
     for (i = 1; i < images_shown; i++) {
@@ -168,7 +151,8 @@ function onStart() {
         $('#main-container')[0].appendChild(new_button);
     }
 
-    total_margin = Math.ceil(all_jpegs.length/columns_shown) * img_height - 3 * img_height;
+    total_margin = (all_jpegs.length/columns_shown - (rows_shown + 2)) * img_height;
+    $('#main-container')[0].style.marginTop = '0px';
     $('#main-container')[0].style.marginBottom = total_margin + 'px';
     top_margin = 0;
     bot_margin = total_margin;
@@ -176,62 +160,50 @@ function onStart() {
 
 function onWindowScroll() {
     var new_button;
+    var new_first = Math.floor(window.scrollY/img_height) * columns_shown;
 
-    if (window.scrollY < total_margin) {
-        var new_first = Math.floor((all_jpegs.length/columns_shown) / (document.body.clientHeight/window.scrollY)) * columns_shown
-        if (first_index < new_first) {
-            for (i = first_index; i < first_index + images_shown && i < new_first; i++) {
-                $('.image-button')[0].remove();
-            }
-
-            for (i = new_first; i < new_first + images_shown; i++) {
-                if (i >= first_index + images_shown) {
-                   new_button = addButtonImg(i);
-                   $('#main-container')[0].appendChild(new_button);
-                }
-            }
-
-            var margin_diff = (new_first - first_index)/columns_shown * img_height;
-
-            top_margin += margin_diff;
-            bot_margin -= margin_diff;
-
-            $('#main-container')[0].style.marginTop = top_margin + 'px';
-            $('#main-container')[0].style.marginBottom = bot_margin + 'px';
-
-            first_index = new_first;
-
-        } else if (first_index > new_first) {
-            for (i = first_index; i < first_index + images_shown; i++) {
-                if (i >= new_first + images_shown) {
-                    $('.image-button')[$('.image-button').length-1].remove();
-                }
-            }
-
-            var new_buttons = []
-
-            for (i = new_first; i < new_first + images_shown && i < first_index; i++) {
-                new_buttons.push(addButtonImg(i));
-            }
-
-            for (i = new_buttons.length; i > 0; i--) {
-                $('#main-container').prepend(new_buttons[i-1]);
-            }
-
-            var margin_diff = (new_first - first_index)/columns_shown * img_height;
-
-            top_margin += margin_diff;
-            bot_margin -= margin_diff;
-
-            $('#main-container')[0].style.marginTop = top_margin + 'px';
-            $('#main-container')[0].style.marginBottom = bot_margin + 'px';
-
-            first_index = new_first;
-        }
-    } else {
-        $('#main-container')[0].style.marginTop = total_margin + 'px';
-        $('#main-container')[0].style.marginBottom = 0;
+    if (new_first > all_jpegs.length - images_shown) {
+        new_first = all_jpegs.length - images_shown;
     }
+
+    if (first_index < new_first) {
+        for (i = first_index; i < first_index + images_shown && i < new_first && i < all_jpegs.length - images_shown; i++) {
+            $('.image-button')[0].remove();
+        }
+
+        for (i = new_first; i < new_first + images_shown && i < all_jpegs.length; i++) {
+            if (i >= first_index + images_shown) {
+               new_button = addButtonImg(i);
+               $('#main-container')[0].appendChild(new_button);
+            }
+        }
+    } else if (first_index > new_first) {
+        for (i = first_index; i < first_index + images_shown; i++) {
+            if (i >= new_first + images_shown) {
+                $('.image-button')[$('.image-button').length-1].remove();
+            }
+        }
+
+        var new_buttons = []
+
+        for (i = new_first; i < new_first + images_shown && i < first_index; i++) {
+            new_buttons.push(addButtonImg(i));
+        }
+
+        for (i = new_buttons.length; i > 0; i--) {
+            $('#main-container').prepend(new_buttons[i-1]);
+        }
+    }
+
+    var margin_diff = (new_first - first_index)/columns_shown * img_height;
+
+    top_margin += margin_diff;
+    bot_margin -= margin_diff;
+
+    $('#main-container')[0].style.marginTop = top_margin + 'px';
+    $('#main-container')[0].style.marginBottom = bot_margin + 'px';
+
+    first_index = new_first;
 }
 
 function scrollDelay() {
@@ -241,13 +213,13 @@ function scrollDelay() {
     scroll_run = setTimeout(function(){ onWindowScroll() }, 50);
 }
 
-window.addEventListener('scroll', scrollDelay, false);
-window.addEventListener('resize', scrollDelay, false);
-
 $(document).ready(function() {
     for (var value in all_jpegs) {
         jpeg_dict[all_jpegs[value]] = 0;
     }
+
+    window.addEventListener('scroll', scrollDelay, false);
+    window.addEventListener('resize', refreshPage, false);
 
     onStart();
 })

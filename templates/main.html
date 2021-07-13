@@ -17,11 +17,11 @@
 <body>
     <nav class="navbar sticky-top navbar-dark bg-dark">
         <div class="col d-flex justify-content-start">
-            <!--<div class="btn-group mr-2" role="group" aria-label="Resize button group">
+            <div class="btn-group mr-2" role="group" aria-label="Resize button group">
                 <button class="btn btn-primary" type="button" disabled><b>Resize:</b></button>
                 <button class="btn btn-secondary" type="button" onclick="increaseSize()">+</button>
                 <button class="btn btn-secondary" type="button" onclick="decreaseSize()">-</button>
-            </div>-->
+            </div>
         </div>
         <div class="col d-flex justify-content-center">
             <button class="btn btn-dark" type="button" disabled><b>Total Micrographs: {{ jpegs|length }}</b></button>
@@ -34,7 +34,7 @@
         </div>
     </nav>
     <div class="row mx-0">
-        <div class="col d-flex flex-wrap justify-content-center" id="main-container"></div>
+        <div class="col d-flex flex-wrap justify-content-center px-0" id="main-container"></div>
     </div>
 </body>
 </html>
