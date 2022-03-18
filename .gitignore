@@ -1,0 +1,5 @@
+build
+dist
+GemIO.spec
+__pycache__
+venv
